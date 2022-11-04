@@ -30,10 +30,12 @@ class GameView(arcade.View):
         Render the screen.
         """
         arcade.start_render()
-        k = 0
 
         for node in self.nodes: 
-            self.text_box(node,3,1,arcade.color.WHITE,str(node))
+            if self.is_node_available(node):
+                self.text_box(node,3,1,arcade.color.WHITE,str(node))
+            else: 
+                self.text_box(node,3,1,arcade.color.BLACK,str(node))
 
         for column in range(COLUMN_COUNT): #print slots
             if self.spec_grid[column] == 0:
@@ -82,6 +84,15 @@ class GameView(arcade.View):
         else: 
             print("try again")
 
+    def is_node_available(self, node): 
+        self.next_node = node
+        if (self.next_node in self.constructed_path):
+            return False
+        elif(((self.current_node,self.next_node) in self.link_grid.keys()) or ((self.next_node,self.current_node) in self.link_grid.keys())):
+            return True
+        else: 
+            return False
+
     def is_node(self):
         self.next_node = self.position+1
         if (self.next_node in self.constructed_path):
@@ -105,12 +116,12 @@ class GameView(arcade.View):
     def update_link_grid(self):
         if ((self.current_node,self.next_node) in self.link_grid.keys()):
             self.link_grid[(self.current_node,self.next_node)][0] =1
-        else: 
+        else:   
              self.link_grid[(self.next_node,self.current_node)][0] =1
 
     def update_spec_grid(self):
         self.spec_grid = np.zeros(COLUMN_COUNT, dtype= int)
-        self.spec_grid[self.position+1] = 1
+        self.spec_grid[self.position] = 1
         print("this is spec grid..")
         print(self.spec_grid)
 
