@@ -13,6 +13,7 @@ COLUMN_COUNT = 6
 SCREEN_WIDTH = 700
 SCREEN_HEIGHT = 350
 TIME = 30
+SPECTRUM_SLOTS = 8
 
 class GameView(arcade.View):
     """
@@ -60,6 +61,15 @@ class GameView(arcade.View):
         if text: #print text
             arcade.draw_text(text,col*(MARGIN+WIDTH)-(WIDTH/4),row*(MARGIN+HEIGHT)-(WIDTH/4),arcade.color.BLACK,12)
 
+    def link(self, node1, node2 ):
+        if ((node1,node2) in self.link_grid.keys()):
+            return (node1, node2)
+        elif ((node2,node1) in self.link_grid.keys()):   
+            return (node2, node1)
+        else: 
+            print("there is no link between these two nodes")
+            return
+
 
     def on_key_press(self, key, modifiers):
         print("you pressed something ...")
@@ -78,7 +88,7 @@ class GameView(arcade.View):
             print(self.current_node,self.next_node)
             print("It is a link")
             self.constructed_path.append(self.next_node)
-            self.update_link_grid()
+            self.route_of_links.append(self.link(self.current_node,self.next_node)) # check before appending - done
             self.current_node = self.next_node
             print("this is the path so far")
             print(self.constructed_path)
@@ -87,6 +97,7 @@ class GameView(arcade.View):
             if ((self.current_node) == self.target):
                 print("you have reached the destination")
                 self.score += 720/len(self.constructed_path)
+                self.update_link_grid()
                 self.new_round()
             else:
                 print("Let's select the next node of the path, we are not there yet")
@@ -97,17 +108,34 @@ class GameView(arcade.View):
         self.next_node = node
         if (self.next_node in self.constructed_path):
             return False
-        elif(((self.current_node,self.next_node) in self.link_grid.keys()) or ((self.next_node,self.current_node) in self.link_grid.keys())):
+        elif(self.link(self.current_node,self.next_node) in self.link_grid.keys()):
+            spectrum = self.link_grid[self.link(self.current_node,self.next_node)]
+            self.check_spectrum_slots()
+            # check is there are enough available slots on the link to allocate the request
             return True
         else: 
             return False
 
 
     def update_link_grid(self):
-        if ((self.current_node,self.next_node) in self.link_grid.keys()):
-            self.link_grid[(self.current_node,self.next_node)][0] =1
-        else:   
-             self.link_grid[(self.next_node,self.current_node)][0] =1
+        # checks and modifies the spectrum grid to update with slots allocated by heuristics 
+        for link in self.route_of_links:
+            spectrum = self.link_grid[link]
+        self.check_spectrum_slots()
+        self.modify_spectrum_slots()
+    
+    def check_spectrum_slots(self):
+        # method that checks the availability of the spectrum slots
+        pass
+
+
+    def modify_spectrum_slots(self):
+        # use heuristic to alocate spectrum
+        # this is a heuristics methods, Not performed by the agent 
+        # implement here heuristics for SA - first fit
+        pass
+
+        
 
     def update_spec_grid(self):
         self.spec_grid = np.zeros(COLUMN_COUNT, dtype= int)
@@ -124,7 +152,7 @@ class GameView(arcade.View):
         self.G.add_edges_from(self.edges)
         self.link_grid = OrderedDict()
         for edge in self.edges: #populate link grid
-            self.link_grid[edge] = np.zeros(1, dtype= int)
+            self.link_grid[edge] = np.zeros(SPECTRUM_SLOTS, dtype= int)
         print("This is the link grid")
         print(self.edges)
         self.new_round()                  
@@ -139,7 +167,9 @@ class GameView(arcade.View):
         self.current_node = self.source
         self.next_node = self.source
         self.constructed_path = [self.source]
-        self.update_spec_grid()#populate spectrum grid
+        self.route_of_links = []
+        self.slots = np.random.randint(2,5) #how many slots i need for my request
+        self.update_spec_grid()#populate POSITION grid
 
 
 def main():
