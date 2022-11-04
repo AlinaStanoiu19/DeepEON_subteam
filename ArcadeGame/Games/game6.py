@@ -74,7 +74,16 @@ class GameView(arcade.View):
 
     def check_node(self):
 
-        if self.is_node():
+        if self.is_node_available(self.position+1):
+            print(self.current_node,self.next_node)
+            print("It is a link")
+            self.constructed_path.append(self.next_node)
+            self.update_link_grid()
+            self.current_node = self.next_node
+            print("this is the path so far")
+            print(self.constructed_path)
+            print("this is the link grid")
+            print(self.link_grid)
             if ((self.current_node) == self.target):
                 print("you have reached the destination")
                 self.score += 720/len(self.constructed_path)
@@ -89,25 +98,6 @@ class GameView(arcade.View):
         if (self.next_node in self.constructed_path):
             return False
         elif(((self.current_node,self.next_node) in self.link_grid.keys()) or ((self.next_node,self.current_node) in self.link_grid.keys())):
-            return True
-        else: 
-            return False
-
-    def is_node(self):
-        self.next_node = self.position+1
-        if (self.next_node in self.constructed_path):
-            print("you have been here before")
-            return False
-        elif(((self.current_node,self.next_node) in self.link_grid.keys()) or ((self.next_node,self.current_node) in self.link_grid.keys())):
-            print(self.current_node,self.next_node)
-            print("It is a link")
-            self.constructed_path.append(self.next_node)
-            self.update_link_grid()
-            self.current_node = self.next_node
-            print("this is the path so far")
-            print(self.constructed_path)
-            print("this is the link grid")
-            print(self.link_grid)
             return True
         else: 
             return False
