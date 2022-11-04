@@ -6,8 +6,10 @@ from Games.game5 import ArcadeGame
 import numpy as np
 import pandas as pd
 import datetime as dt
+import os
+ 
 K = 5
-episode_count_targets = 100
+episode_count_targets = 10
 game_config = {
   "solution_reward": 10,
   "rejection_reward": -10,
@@ -55,6 +57,9 @@ std_reward = np.std(episode_rewards)
 print(mean_reward)
 index = np.arange(0,episode_count_targets)
 df = pd.DataFrame({"index":index,"Episode Rewards":np.array(episode_rewards)})
-time = dt.datetime
-df.to_json("Evaluation data\evaluation_huristic_2.json")
+time = dt.datetime 
+
+if not os.path.exists("./Evaluation data"):
+    os.makedirs("./Evaluation data")
+df.to_json("./Evaluation data/evaluation_huristic_2.json")
     
