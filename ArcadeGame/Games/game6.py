@@ -31,20 +31,19 @@ class GameView(arcade.View):
         """
         arcade.start_render()
 
-        # prints out target node layer (top row)
-        for node in self.nodes:
+        for node in self.nodes: 
+            # prints out target node layer (top row)
             if node == self.target:
                 self.text_box(node,4,1,arcade.color.GREEN)
             else:
                 self.text_box(node,4,1,arcade.color.WHITE)
-
-        # prints out the next available nodes (mid row)
-        for node in self.nodes: 
+            
+            # prints out the next available nodes (mid row)
             if self.is_node_available(node):
                 self.text_box(node,3,1,arcade.color.WHITE,str(node))
             else: 
                 self.text_box(node,3,1,arcade.color.BLACK,str(node))
-
+            
         # prints out current node selection (bot row)
         for column in range(COLUMN_COUNT):
             if self.spec_grid[column] == 0:
@@ -152,9 +151,9 @@ class GameView(arcade.View):
         """
         Sets up all parameters for a new round
         """
-        self.position = 0 
         self.target = np.random.randint(2,7)
         self.source = np.random.randint(1,self.target)
+        self.position = self.source-1
         self.current_node = self.source
         self.next_node = self.source
         self.constructed_path = [self.source]
