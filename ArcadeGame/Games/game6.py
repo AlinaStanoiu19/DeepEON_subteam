@@ -44,7 +44,7 @@ class GameView(arcade.View):
             else:
                 self.text_box(column+1,2,1,arcade.color.GREEN, str(self.current_node))
 
-        self.text_box(1,10,12,arcade.color.PINK,str(f"Request: (Source:{self.source}, Target:{self.target})")) #print source node
+        self.text_box(1,10,12,arcade.color.PINK,str(f"Request: (Source:{self.source}, Target:{self.target}, Slots:{self.slots})")) #print source node
         self.text_box(18,12,4,arcade.color.PINK,"Topology") 
         self.text_box(8,12,4,arcade.color.PINK,"Score: {}".format(self.score))
         self.text_box(1,12,6,arcade.color.PINK,"High Score: {}".format(self.high_score))
@@ -67,7 +67,7 @@ class GameView(arcade.View):
         elif ((node2,node1) in self.link_grid.keys()):   
             return (node2, node1)
         else: 
-            print("there is no link between these two nodes")
+            # print("there is no link between these two nodes")
             return
 
 
@@ -94,10 +94,14 @@ class GameView(arcade.View):
             print(self.constructed_path)
             print("this is the link grid")
             print(self.link_grid)
+            print("we have updated the rsp with:")
+            print(self.rps)
             if ((self.current_node) == self.target):
                 print("you have reached the destination")
                 self.score += 720/len(self.constructed_path)
                 self.update_link_grid()
+                print("this is the updated link grid")
+                print(self.link_grid)
                 self.new_round()
             else:
                 print("Let's select the next node of the path, we are not there yet")
@@ -108,33 +112,24 @@ class GameView(arcade.View):
         self.next_node = node
         if (self.next_node in self.constructed_path):
             return False
-        elif(self.link(self.current_node,self.next_node) in self.link_grid.keys()):
-            spectrum = self.link_grid[self.link(self.current_node,self.next_node)]
-            self.check_spectrum_slots()
-            # check is there are enough available slots on the link to allocate the request
-            return True
+        elif(self.link(self.current_node,self.next_node) in self.link_grid.keys()):  
+            next_rps = self.link_grid[self.link(self.current_node,self.next_node)]
+            if (not np.any(np.bitwise_and(self.rps, next_rps))):
+                self.rps = np.bitwise_or(self.rps, next_rps)
+                # check is there are enough available slots on the link to allocate the request
+                return True
+            else: 
+                return False
         else: 
             return False
 
-
     def update_link_grid(self):
-        # checks and modifies the spectrum grid to update with slots allocated by heuristics 
         for link in self.route_of_links:
-            spectrum = self.link_grid[link]
-        self.check_spectrum_slots()
-        self.modify_spectrum_slots()
+            spectrum = np.zeros(SPECTRUM_SLOTS, dtype= int)
+            spectrum[self.first_slot:(self.first_slot+self.slots)] = np.ones(self.slots, dtype=int)
+            self.link_grid[link] = np.bitwise_or(self.link_grid[link],spectrum)
+        pass
     
-    def check_spectrum_slots(self):
-        # method that checks the availability of the spectrum slots
-        pass
-
-
-    def modify_spectrum_slots(self):
-        # use heuristic to alocate spectrum
-        # this is a heuristics methods, Not performed by the agent 
-        # implement here heuristics for SA - first fit
-        pass
-
         
 
     def update_spec_grid(self):
@@ -159,16 +154,21 @@ class GameView(arcade.View):
                         
     def new_round(self):
         """
-        Sets up all parameters for a new round
+        Sets up all parameters for a new round, one roud = one request 
         """
         self.position = 0 
+        self.first_slot = 0
+        self.slots = np.random.randint(2,5) #how many slots i need for my request
         self.target = np.random.randint(2,7)
         self.source = np.random.randint(1,self.target)
         self.current_node = self.source
         self.next_node = self.source
         self.constructed_path = [self.source]
         self.route_of_links = []
-        self.slots = np.random.randint(2,5) #how many slots i need for my request
+        self.rps = np.zeros(SPECTRUM_SLOTS, dtype=int)
+        self.rps[self.first_slot:(self.first_slot+self.slots)] = np.ones(self.slots, dtype=int)
+        print("this is the rps array at the first link")
+        print(self.rps)
         self.update_spec_grid()#populate POSITION grid
 
 
