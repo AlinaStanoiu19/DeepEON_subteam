@@ -15,11 +15,11 @@ class CustomEnv(Env):
     def step(self, action):
         reward, done, info = 0, False, {} 
 
-        if action == 0 and self.game.first_slot < 44-self.game.slots: # RIGHT
+        if action == 0: #and self.game.first_slot < 44-self.game.slots: # RIGHT
             self.game.first_slot +=1
             self.game.update_spec_grid()
             reward = self.config["right_reward"]
-        elif action == 1 and self.game.first_slot > 0: #LEFT
+        elif action == 1: #and self.game.first_slot > 0: #LEFT
             self.game.first_slot -=1
             self.game.update_spec_grid()
             reward = self.config["left_reward"]

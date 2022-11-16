@@ -16,10 +16,12 @@ model = DQN.load("Models/model1")
 print("loaded")
 
 env.highscore = 0
+
 while True:
     
     obs = env.reset()
     done = False
+    
     while not done:
         action, _states = model.predict(obs)
         obs, rewards, done, info = env.step(action)
