@@ -5,9 +5,10 @@ import numpy as np
 import networkx as nx
 import sys
 import cv2
+
 SCREEN_WIDTH = 920
 SCREEN_HEIGHT = 150
-COLUMN_COUNT = 8
+COLUMN_COUNT = 6
 WIDTH = 20
 HEIGHT = 20
 WHITE = (255,255,255)
@@ -23,25 +24,47 @@ class ArcadeGame:
         self.background = pygame.Surface(self.window)
         self.highscore = 0
         self.edges = [(1,2),(2,3),(1,4),(3,5),(2,5),(4,5),(3,6),(4,6)]
+        self.nodes = [1,2,3,4,5,6]
         self.G = nx.Graph()
         self.G.add_edges_from(self.edges)
         self.seed()
     
     def draw_screen(self):
         self.background.fill(RED)
-        for k, path in enumerate(self.paths):
-            for i,row in enumerate(self.path_grid(path).values()): #print links grid
-                for column in range(COLUMN_COUNT):
-                    if row[column] == 0:
-                        self.draw_box(column+1 + k*9,5 - i,WHITE)
-                    else:
-                        self.draw_box(column+1 + k*9,5 - i,BLACK)
 
-        for column in range(COLUMN_COUNT*5 + 4): #print slots
-            if self.spec_grid[column] == 0:
-                self.draw_box(column+1,6,RED)
+        for node in self.nodes: 
+            # prints out target node layer (top row)
+            if node == self.target:
+                self.draw_box(node,4,GREEN)
             else:
-                self.draw_box(column+1,6,GREEN)
+                self.draw_box(node,4,WHITE)
+            
+            # prints out the next available nodes (mid row)
+            if self.is_node_available(node):
+                self.draw_box(node,3,WHITE)
+            else: 
+                self.draw_box(node,3,BLACK)
+            
+        # prints out current node selection (bot row)
+        for column in range(COLUMN_COUNT):
+            if self.spec_grid[column] == 0:
+                self.draw_box(column+1,2,RED)
+            else:
+                self.draw_box(column+1,2,GREEN)
+
+        # for k, path in enumerate(self.paths):
+        #     for i, row in enumerate(self.path_grid(path).values()): #print links grid
+        #         for column in range(COLUMN_COUNT):
+        #             if row[column] == 0:
+        #                 self.draw_box(column+1 + k*9,5 - i,WHITE)
+        #             else:
+        #                 self.draw_box(column+1 + k*9,5 - i,BLACK)
+
+        # for column in range(COLUMN_COUNT*5 + 4): #print slots
+        #     if self.spec_grid[column] == 0:
+        #         self.draw_box(column+1,6,RED)
+        #     else:
+        #         self.draw_box(column+1,6,GREEN)
         
         self.surfarr = pygame.surfarray.array3d(self.background)
         return self.surfarr
@@ -60,7 +83,9 @@ class ArcadeGame:
         self.blocks = 0
         self.link_grid = {}
         for edge in self.edges: #populate link grid
-            self.link_grid[edge] = np.zeros(COLUMN_COUNT, dtype= int)
+            self.link_grid[edge] = np.zeros(1, dtype= int)
+        print("This is the link grid")
+        print(self.edges)
         self.new_round()                  
                             
     def new_round(self):
@@ -70,74 +95,69 @@ class ArcadeGame:
         self.first_slot = 0
         self.target = np.random.randint(2,7)
         self.source = np.random.randint(1,self.target)
-        p = nx.shortest_simple_paths(self.G,self.source,self.target)
-        self.paths = list(islice(p,5))
-        self.slots = np.random.randint(2,5)
+        self.position = self.source-1
+        self.current_node = self.source
+        self.next_node = self.source
+        self.constructed_path = [self.source]
         self.update_spec_grid()#populate spectrum grid
 
     def update_spec_grid(self):
-        self.spec_grid = np.zeros(COLUMN_COUNT*5 + 4, dtype= int)
-        for i in range(self.slots):
-            self.spec_grid[self.first_slot+i] = 1
+        self.spec_grid = np.zeros(COLUMN_COUNT, dtype= int)
+        self.spec_grid[self.position] = 1
+        print("This is the spec grid..")
+        print(self.spec_grid)
 
-    def check_solution(self):
+    def check_node(self):
         done = False
-        if self.is_solution():
-            reward = self.config["solution_reward"]
-            self.score += self.config["solution_reward"]
-            self.update_link_grid()
-            self.new_round()
+
+        if self.is_node():
+            if ((self.current_node) == self.target):
+                reward = self.config["solution_reward"]
+                print("You have reached the destination")
+                self.score += 720/len(self.constructed_path)
+                self.update_link_grid()
+                self.new_round()
         else:
-            self.blocks += 1
             reward = self.config["rejection_reward"]
             self.score += self.config["rejection_reward"]
-            if self.blocks > 2:
-                if self.score > self.highscore:
-                    self.highscore = self.score
-                done = True
+            done = True
+            print("try again")
+        
         return reward, done
 
-    def is_solution(self, first_slot = -1):
-        """
-        Checks for solution
-        """
-        if first_slot == -1:
-            first_slot = self.first_slot
-
-        if not self.spec_grid[8] == 1 and not self.spec_grid[17] == 1 and not self.spec_grid[26] == 1 and not self.spec_grid[35] == 1:
-            self.path_selected = first_slot//9
-            self.ans_grid = self.path_grid(self.paths[self.path_selected])
-            self.temp_first_slot = first_slot - self.path_selected*9
-            for row in self.ans_grid.values(): #for spectrum of each link
-                for i in range(self.slots): #for each slot
-                    #print(self.temp_first_slot + i, first_slot)
-                    if row[self.temp_first_slot + i] != 0: #if slot in spectrum is occupied 
-                        return False
+    def is_node_available(self, node): 
+        self.next_node = node
+        if (self.next_node in self.constructed_path):
+            return False
+        elif(((self.current_node,self.next_node) in self.link_grid.keys()) or ((self.next_node,self.current_node) in self.link_grid.keys())):
             return True
-        else:
+        else: 
             return False
 
-    def path_grid(self, path):
-        i = 0 
-        all_edges = []
-        while i < len(path)-1: #prepare all edges in path
-            if path[i] < path[i+1]:
-                all_edges.append((path[i],path[i+1]))
-            else:
-                all_edges.append((path[i+1],path[i]))
-            i+=1
-
-        temp_path_grid = {}
-        for edge in all_edges: #populate answer grid with edges 
-            temp_path_grid[edge]= self.link_grid[edge]
-        return temp_path_grid
+    def is_node(self):
+        self.next_node = self.position+1
+        if (self.next_node in self.constructed_path):
+            print("you have been here before")
+            return False
+        elif(((self.current_node,self.next_node) in self.link_grid.keys()) or ((self.next_node,self.current_node) in self.link_grid.keys())):
+            print(self.current_node,self.next_node)
+            print("It is a link")
+            self.constructed_path.append(self.next_node)
+            self.update_link_grid()
+            self.current_node = self.next_node
+            print("this is the path so far")
+            print(self.constructed_path)
+            print("this is the link grid")
+            print(self.link_grid)
+            return True
+        else: 
+            return False
 
     def update_link_grid(self):
-        for edge in self.ans_grid.keys():
-            grid = self.link_grid[edge]
-            for i in range(self.slots):
-                grid[self.temp_first_slot+i] = 1
-            self.link_grid[edge] = grid
+        if ((self.current_node,self.next_node) in self.link_grid.keys()):
+            self.link_grid[(self.current_node,self.next_node)][0] =1
+        else:   
+             self.link_grid[(self.next_node,self.current_node)][0] =1
 
     def seed(self):
         np.random.seed(self.config["seed"])

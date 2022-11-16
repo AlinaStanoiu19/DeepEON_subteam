@@ -27,6 +27,6 @@ game_config = {
 
 env = CustomEnv(game_config)
 model = DQN(CnnPolicy, env,  verbose=1, buffer_size = 5000)
-model.learn(total_timesteps = 100000)
-model.save("Models/model_1")
+model.learn(total_timesteps = 100)
+model.save("Models/model1")
 

@@ -24,7 +24,7 @@ class CustomEnv(Env):
             self.game.update_spec_grid()
             reward = self.config["left_reward"]
         elif action == 2: # ENTER
-            reward, done = self.game.check_node()
+            reward, done = self.game.check_solution()
             
         observation = self.game.draw_screen()
 
