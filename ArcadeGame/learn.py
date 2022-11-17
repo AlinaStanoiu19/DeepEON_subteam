@@ -1,14 +1,14 @@
 from random import seed
 from stable_baselines3.dqn import CnnPolicy
 from stable_baselines3 import DQN
-from envs.custom_env import CustomEnv
+from envs.custom_env2 import CustomEnv
 from wandb.integration.sb3 import WandbCallback
 import wandb
 import argparse
 
 
 game_config = {
-  "solution_reward": 10,
+  "solution_reward": 100,
   "rejection_reward": -10,
   "left_reward": 0,
   "right_reward": 0,
@@ -26,7 +26,7 @@ game_config = {
 #)
 
 env = CustomEnv(game_config)
-model = DQN(CnnPolicy, env,  verbose=1, buffer_size = 5000)
-model.learn(total_timesteps = 100000)
-model.save("Models/model_1")
+model = DQN(CnnPolicy, env,  verbose=2, buffer_size = 5000)
+model.learn(total_timesteps = 100)
+# model.save("Models/model_1")
 

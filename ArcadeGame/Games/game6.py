@@ -53,7 +53,7 @@ class GameView(arcade.View):
     def text_box(self,col,row,width,colour,text=None):
         """
         Prints a rectangle with given dimensions and colour and inserts given text 
-        """
+        """   
         if width%2 == 0:
             arcade.draw_rectangle_filled((col + width/2)*(MARGIN+WIDTH) - (MARGIN+WIDTH)/2,row*(MARGIN+HEIGHT),width*(WIDTH+MARGIN)-MARGIN,HEIGHT,colour)
         else:
