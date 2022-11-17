@@ -1,7 +1,7 @@
 from gym import Env
 from gym import spaces
 import numpy as np
-from Games.agent_game1 import ArcadeGame, SCREEN_HEIGHT,SCREEN_WIDTH
+from Games.agent_game1 import ArcadeGame, SCREEN_HEIGHT, SCREEN_WIDTH
 
 class CustomEnv(Env):
     metadata = {'render.modes': ['human', 'rgb_array']}
@@ -15,23 +15,32 @@ class CustomEnv(Env):
     def step(self, action):
         reward, done, info = 0, False, {} 
 
-        if action == 0: #and self.game.first_slot < 44-self.game.slots: # RIGHT
-            self.game.first_slot +=1
+        if action == 0 and self.game.position < 5: # RIGHT
+            print("Move RIGHT")
+            self.game.position +=1
             self.game.update_spec_grid()
             reward = self.config["right_reward"]
-        elif action == 1: #and self.game.first_slot > 0: #LEFT
-            self.game.first_slot -=1
+        elif action == 1 and self.game.position > 0: #LEFT
+            print("Move LEFT")
+            self.game.position -=1
             self.game.update_spec_grid()
             reward = self.config["left_reward"]
         elif action == 2: # ENTER
+            print("ENTER")
             reward, done = self.game.check_node()
+
+        print(f"Number of blocks: {self.game.blocks} Score: {self.game.score} High Score: {self.game.highscore}")
+
             
         observation = self.game.draw_screen()
 
         return observation, reward, done, info
 
     def reset(self):
-        self.game.new_game()
+        if self.game.score == "CHANGE" or self.game.blocks == 4:
+            self.game.new_game()
+        else:
+            self.game.new_round()
         observation = self.game.draw_screen()
         return observation 
 

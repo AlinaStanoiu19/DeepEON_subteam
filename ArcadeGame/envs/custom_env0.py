@@ -1,7 +1,7 @@
 from gym import Env
 from gym import spaces
 import numpy as np
-from Games.agent_game1 import ArcadeGame, SCREEN_HEIGHT,SCREEN_WIDTH
+from Games.game5 import ArcadeGame, SCREEN_HEIGHT,SCREEN_WIDTH
 
 class CustomEnv(Env):
     metadata = {'render.modes': ['human', 'rgb_array']}

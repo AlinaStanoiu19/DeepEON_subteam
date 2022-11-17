@@ -2,6 +2,7 @@ from itertools import islice
 from pickletools import pystring
 import pygame 
 import numpy as np
+import random
 import networkx as nx
 import sys
 import cv2
@@ -17,6 +18,8 @@ GREEN = (0,255,0)
 RED = (255,0,0)
 
 class ArcadeGame:
+
+    score = "CHANGE"
 
     def __init__(self, config):
         self.config = config
@@ -73,10 +76,16 @@ class ArcadeGame:
         self.screen = pygame.display.set_mode(self.window)
         self.screen.blit(self.background,(0,0))
         pygame.display.flip()
-        print(f"Number of blocks: {self.blocks} Score: {self.score} High Score: {self.highscore}")
 
     def draw_box(self,col,row,colour):
         pygame.draw.rect(self.background,colour,(col*20,row*20,WIDTH,HEIGHT))
+
+    # # starts new game only if first run
+    # def game_or_round(self): # !!! change when full SA is implemented
+    #     if self.score == "CHANGE":
+    #         self.new_game()
+    #     else:
+    #         self.new_round()
 
     # sets up paramenters for a new game
     def new_game(self):
@@ -85,14 +94,15 @@ class ArcadeGame:
         self.link_grid = {}
         for edge in self.edges: # populate link grid
             self.link_grid[edge] = np.zeros(1, dtype= int)
-        print(f"Link grid: {self.edges}")
+        print(f"Edges grid: {self.edges}")
         self.new_round()                  
 
     # sets up parameters for a new round          
     def new_round(self):
         self.first_slot = 0
-        self.target = np.random.randint(2,7)
-        self.source = np.random.randint(1,self.target)
+        self.target, self.source = random.sample(range(1,7), 2)
+        print(f"Target node: {self.target}")
+        print(f"Source node: {self.source}")
         self.position = self.source-1
         self.current_node = self.source
         self.next_node = self.source
@@ -104,11 +114,12 @@ class ArcadeGame:
         self.spec_grid[self.position] = 1
         print(f"Current node selection grid: {self.spec_grid}")
 
+    # updates link grid after each move to keep track of SA
     def update_link_grid(self):
         if ((self.current_node,self.next_node) in self.link_grid.keys()):
-            self.link_grid[(self.current_node,self.next_node)][0] =1
+            self.link_grid[(self.current_node,self.next_node)][0] = 1
         else:   
-             self.link_grid[(self.next_node,self.current_node)][0] =1
+            self.link_grid[(self.next_node,self.current_node)][0] = 1
 
     def check_node(self):
         done = False
@@ -116,15 +127,19 @@ class ArcadeGame:
         if self.is_node():
             if ((self.current_node) == self.target):
                 reward = self.config["solution_reward"]
-                print("You have reached the destination")
+                print("!!! You have reached the target")
                 self.score += 720/len(self.constructed_path)
-                self.update_link_grid()
+                # self.update_link_grid()
                 self.new_round()
+            else:
+                reward = self.config["move_reward"]
+                self.score += self.config["move_reward"]
+                print("Continue moving")
         else:
             reward = self.config["rejection_reward"]
             self.score += self.config["rejection_reward"]
+            self.blocks += 1
             done = True
-            print("try again")
         
         return reward, done
 
@@ -140,18 +155,15 @@ class ArcadeGame:
     def is_node(self):
         self.next_node = self.position+1
         if (self.next_node in self.constructed_path):
-            print("you have been here before")
+            print("Already accessed node")
             return False
         elif(((self.current_node,self.next_node) in self.link_grid.keys()) or ((self.next_node,self.current_node) in self.link_grid.keys())):
-            print(self.current_node,self.next_node)
-            print("It is a link")
+            print(f"Link {self.current_node,self.next_node} is valid")
             self.constructed_path.append(self.next_node)
             self.update_link_grid()
             self.current_node = self.next_node
-            print("this is the path so far")
-            print(self.constructed_path)
-            print("this is the link grid")
-            print(self.link_grid)
+            print(f"Path so far: {self.constructed_path}")
+            print(f"Link grid: {self.link_grid}")
             return True
         else: 
             return False
