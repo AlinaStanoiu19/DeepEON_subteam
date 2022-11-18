@@ -34,6 +34,7 @@ class CustomEnv(Env):
 
     def reset(self):
         self.game.new_game()
+        print("this is a NEW GAMEEE")
         observation = self.game.draw_screen()
         return observation 
 

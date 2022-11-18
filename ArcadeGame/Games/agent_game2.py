@@ -45,6 +45,7 @@ class ArcadeGame:
         """
         Sets up all parameters for a new round, one roud = one request 
         """
+        print("this is a NEW ROUND")
         self.position = 0 
         self.slots = np.random.randint(2,5) 
         self.target = np.random.randint(2,7)
