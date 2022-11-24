@@ -70,33 +70,98 @@ class GameView(arcade.View):
             # print("there is no link between these two nodes")
             return
 
-    def on_key_press(self, key, modifiers):
-        print("you pressed something ...")
-        if key == arcade.key.RIGHT and self.position < (COLUMN_COUNT)-1:
-            self.position+=1
-            self.update_spec_grid()
-        elif key == arcade.key.LEFT and self.position > 0:
-            self.position -=1
-            self.update_spec_grid()
-        elif key == arcade.key.ENTER:
-            self.next_node = self.position + 1
-            if self.next_node in self.nodes_availability[self.current_node]: 
-                # move to node 
-                self.move_to_node()
-                # check if it is the destination 
-                if (self.current_node == self.target):
-                    print("You  have reached the destination")
-                    self.score += 720/len(self.constructed_path)
-                    self.update_link_grid()
-                    print(f"this is the updated link grid: {self.link_grid}")
-                    self.new_round()
-                else: 
-                    print("Let's select the next node of the path, we are not there yet")
+    def enter(self):
+        self.next_node = self.position +1
+        print(self.next_node)
+        print(self.current_node)
+        if self.next_node in self.nodes_availability[self.current_node]: 
+            print("node available")
+            # move to node 
+            self.move_to_node()
+            # check if it is the destination 
+            if (self.current_node == self.target):
+                print("You  have reached the destination")
+                self.score += 720/len(self.constructed_path)
+                self.update_link_grid()
+                print(f"this is the updated link grid: {self.link_grid}")
+                self.new_round()
             else: 
-                self.blocks += 1
-                if (self.blocks > 3):
-                    print("Game has ended")
-                    self.new_game()
+                print("Let's select the next node of the path, we are not there yet")
+        else: 
+            self.blocks += 1
+            if (self.blocks > 10):
+                print("Game has ended")
+                self.new_game()
+
+    def on_key_press(self, key, modifiers): #teleportation method
+        print("you pressed something ...")
+        match key:
+            case arcade.key.KEY_1:
+                self.position=0
+                self.update_spec_grid()
+                self.enter()
+            case arcade.key.KEY_2:
+                self.position=1
+                self.update_spec_grid()
+                self.enter()
+            case arcade.key.KEY_3:
+                self.position=2
+                self.update_spec_grid()
+                self.enter()
+            case arcade.key.KEY_4:
+                self.position=3
+                self.update_spec_grid()
+                self.enter()
+            case arcade.key.KEY_5:
+                self.position=4
+                self.update_spec_grid()
+                self.enter()
+            case arcade.key.KEY_6:
+                self.position=5
+                self.update_spec_grid()
+                self.enter()
+            case arcade.key.KEY_7:
+                self.position=6
+                self.update_spec_grid()
+                self.enter()
+            case arcade.key.KEY_8:
+                self.position=7
+                self.update_spec_grid()
+                self.enter()
+            case arcade.key.KEY_9:
+                self.position=8
+                self.update_spec_grid()
+                self.enter()                
+            case _:
+                print("Incorrect input. Please try again")
+
+    # def on_key_press(self, key, modifiers):
+    #     print("you pressed something ...")
+    #     if key == arcade.key.RIGHT and self.position < (COLUMN_COUNT)-1:
+    #         self.position+=1
+    #         self.update_spec_grid()
+    #     elif key == arcade.key.LEFT and self.position > 0:
+    #         self.position -=1
+    #         self.update_spec_grid()
+    #     elif key == arcade.key.ENTER:
+    #         self.next_node = self.position + 1
+    #         if self.next_node in self.nodes_availability[self.current_node]: 
+    #             # move to node 
+    #             self.move_to_node()
+    #             # check if it is the destination 
+    #             if (self.current_node == self.target):
+    #                 print("You  have reached the destination")
+    #                 self.score += 720/len(self.constructed_path)
+    #                 self.update_link_grid()
+    #                 print(f"this is the updated link grid: {self.link_grid}")
+    #                 self.new_round()
+    #             else: 
+    #                 print("Let's select the next node of the path, we are not there yet")
+    #         else: 
+    #             self.blocks += 1
+    #             if (self.blocks > 3):
+    #                 print("Game has ended")
+    #                 self.new_game()
 
     
     def move_to_node(self):
