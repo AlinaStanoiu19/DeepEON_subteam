@@ -1,20 +1,20 @@
 import pygame
 from stable_baselines3 import DQN
-from envs.custom_env import CustomEnv
+from envs.custom_env2 import CustomEnv
 
 game_config = {
   "solution_reward": 10,
   "rejection_reward": -10,
   "move_reward": -1,
-  "left_reward": 2,
-  "right_reward": 2,
+  "left_reward": 0,
+  "right_reward": 0,
   "seed": 0
 }
 
 env = CustomEnv(game_config)
 
-model = DQN.load("Models/model_ucl1")
-print("loaded")
+model = DQN.load("Models/model2_ucl05")
+print("LOADED")
 
 env.highscore = 0
 
