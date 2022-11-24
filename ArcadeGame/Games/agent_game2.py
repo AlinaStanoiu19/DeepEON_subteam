@@ -4,13 +4,12 @@ import pygame
 import numpy as np
 import networkx as nx
 import sys
-import cv2
 from typing import OrderedDict
 
 SPECTRUM_SLOTS = 8
 SCREEN_WIDTH = 920
 SCREEN_HEIGHT = 150
-COLUMN_COUNT = 8
+COLUMN_COUNT = 6
 WIDTH = 20
 HEIGHT = 20
 WHITE = (255,255,255)
@@ -32,6 +31,7 @@ class ArcadeGame:
         self.seed()
     
     def new_game(self):
+        print("this is a NEW GAMEEE")
         self.score = 0
         self.blocks = 0
         self.link_grid = OrderedDict()

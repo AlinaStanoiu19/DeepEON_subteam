@@ -89,7 +89,7 @@ class GameView(arcade.View):
                 print("Let's select the next node of the path, we are not there yet")
         else: 
             self.blocks += 1
-            if (self.blocks > 10):
+            if (self.blocks > 3):
                 print("Game has ended")
                 self.new_game()
 

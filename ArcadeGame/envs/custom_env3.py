@@ -9,12 +9,12 @@ class CustomEnv(Env):
     def __init__(self, config):
         self.config = config 
         self.game = ArcadeGame(self.config)
-        self.action_space = spaces.Discrete(3)
+        self.action_space = spaces.Discrete(6)
         self.observation_space = spaces.Box(shape= (SCREEN_WIDTH, SCREEN_HEIGHT, 3),low=0,high=255,dtype=np.uint8)
     
     def step(self, action):
         reward, done, info = 0, False, {} 
-
+        print(f"Action: {action}")
         if action == 0: 
             self.game.first_slot = 0 # teleport to slot
             self.game.update_spec_grid()
@@ -46,7 +46,6 @@ class CustomEnv(Env):
 
     def reset(self):
         self.game.new_game()
-        print("this is a NEW GAMEEE")
         observation = self.game.draw_screen()
         return observation 
 
