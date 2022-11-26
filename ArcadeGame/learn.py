@@ -8,7 +8,7 @@ import argparse
 
 
 game_config = {
-  "solution_reward": 100,
+  "solution_reward": 10,
   "rejection_reward": -10,
   "move_reward": -1,
   "left_reward": 0,

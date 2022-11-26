@@ -1,7 +1,7 @@
 from random import seed
 from stable_baselines3.dqn import CnnPolicy
 from stable_baselines3 import DQN
-from envs.custom_env import CustomEnv
+from envs.custom_env2 import CustomEnv
 from wandb.integration.sb3 import WandbCallback
 import wandb
 import argparse
@@ -62,6 +62,7 @@ if parse:
 game_config = {
   "solution_reward": 10,
   "rejection_reward": -10,
+  "move_reward": -1,
   "left_reward": 0,
   "right_reward": 0,
   "seed": 0
@@ -94,4 +95,3 @@ model.learn(total_timesteps=config["total_timesteps"],
             )
 run.finish()
 env.close()
-
