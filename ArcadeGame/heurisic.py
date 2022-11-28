@@ -9,7 +9,7 @@ import datetime as dt
 import os
  
 K = 5
-episode_count_targets = 10
+episode_count_targets = 100
 game_config = {
   "solution_reward": 10,
   "rejection_reward": -10,

@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 
 df1 = pd.read_json("Evaluation_data/evaluation_huristic_2.json") #baseline
-df2 = pd.read_json("Evaluation_data/evaluation_w8tdjaly.json") #DQL
+df2 = pd.read_json("Evaluation_data/evaluation_pleasant-lion-1.json") #DQL
 
 mean_reward1 = np.mean(df1["Episode Rewards"])
 std_reward1 = np.std(df1["Episode Rewards"])
@@ -27,7 +27,7 @@ fig, ax = plt.subplots()
 #ax.plot(df1["index"],df1["Episode Rewards"],label = "Baseline")
 
 plt.title("DeepEON vs Baseline")
-plt.xlabel("Rounds")
+plt.xlabel("Episodes")
 plt.ylabel("Score")
 
 eps = [10,20,30,40,50,60,70,80,90,100]
