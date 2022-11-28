@@ -5,7 +5,6 @@ import numpy as np
 import random
 import networkx as nx
 import sys
-import cv2
 from typing import OrderedDict
 
 SPECTRUM_SLOTS = 8

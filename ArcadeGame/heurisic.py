@@ -1,7 +1,7 @@
 from datetime import datetime
 import pygame
 from stable_baselines3 import DQN
-from envs.custom_env import CustomEnv
+from envs.custom_env2 import CustomEnv
 from Games.game5 import ArcadeGame
 import numpy as np
 import pandas as pd

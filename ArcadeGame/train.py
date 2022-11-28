@@ -44,17 +44,30 @@ if parse:
   # Get the hyperparameters
   args = parser.parse_args()
   
+  # args_config = {
+  #   "buffer_size":int(args.buffer_size), 
+  #   "batch_size":int(args.batch_size),
+  #   "exploration_final_eps":float(args.exploration_final_eps),
+  #   "exploration_fraction":float(args.exploration_fraction),
+  #   "gamma":float(args.gamma),
+  #   "learning_rate":float(args.learning_rate),
+  #   "learning_starts":int(args.learning_starts),
+  #   "target_update_interval":int(args.target_update_interval),
+  #   "train_freq":int(args.train_freq),
+  #   "total_timesteps":int(args.total_timesteps)
+  # }
+
   args_config = {
-    "buffer_size":int(args.buffer_size), 
-    "batch_size":int(args.batch_size),
-    "exploration_final_eps":float(args.exploration_final_eps),
-    "exploration_fraction":float(args.exploration_fraction),
-    "gamma":float(args.gamma),
-    "learning_rate":float(args.learning_rate),
-    "learning_starts":int(args.learning_starts),
-    "target_update_interval":int(args.target_update_interval),
-    "train_freq":int(args.train_freq),
-    "total_timesteps":int(args.total_timesteps)
+    "buffer_size":int(config.get("buffer_size")), 
+    "batch_size":int(config.get("batch_size")),
+    "exploration_final_eps":float(config.get("exploration_final_eps")),
+    "exploration_fraction":float(config.get("exploration_fraction")),
+    "gamma":float(config.get("gamma")),
+    "learning_rate":float(config.get("learning_rate")),
+    "learning_starts":int(config.get("learning_starts")),
+    "target_update_interval":int(config.get("target_update_interval")),
+    "train_freq":int(config.get("train_freq")),
+    "total_timesteps":int(config.get("total_timesteps"))
   }
   
   config = args_config
