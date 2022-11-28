@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
-df1 = pd.read_json("Evaluation data\evaluation_huristic_2.json") #baseline
-df2 = pd.read_json("Evaluation data\evaluation_w8tdjaly.json") #DQL
+df1 = pd.read_json("Evaluation_data/evaluation_huristic_2.json") #baseline
+df2 = pd.read_json("Evaluation_data/evaluation_w8tdjaly.json") #DQL
 
 mean_reward1 = np.mean(df1["Episode Rewards"])
 std_reward1 = np.std(df1["Episode Rewards"])
@@ -56,5 +56,3 @@ ax.plot(eps,av_rew1,label = "Baseline")
 plt.legend()
 
 plt.show()
-
-

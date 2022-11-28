@@ -13,6 +13,7 @@ episode_count_targets = 10
 game_config = {
   "solution_reward": 10,
   "rejection_reward": -10,
+  "move_reward": -1,
   "left_reward": 0,
   "right_reward": 0,
   "seed": 1
@@ -59,7 +60,7 @@ index = np.arange(0,episode_count_targets)
 df = pd.DataFrame({"index":index,"Episode Rewards":np.array(episode_rewards)})
 time = dt.datetime 
 
-if not os.path.exists("./Evaluation data"):
-    os.makedirs("./Evaluation data")
-df.to_json("./Evaluation data/evaluation_huristic_2.json")
+if not os.path.exists("./Evaluation_data"):
+    os.makedirs("./Evaluation_data")
+df.to_json("./Evaluation_data/evaluation_huristic_2.json")
     

@@ -13,7 +13,7 @@ game_config = {
 
 env = CustomEnv(game_config)
 
-model = DQN.load("Models/model2_ucl05")
+model = DQN.load("Models/model")
 print("LOADED")
 
 env.highscore = 0

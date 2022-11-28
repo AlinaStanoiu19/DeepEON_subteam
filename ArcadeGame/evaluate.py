@@ -53,6 +53,7 @@ n_episodes = 100
 game_config = {
   "solution_reward": 10,
   "rejection_reward": -10,
+  "move_reward": -1,
   "left_reward": 0,
   "right_reward": 0,
   "seed": 1
