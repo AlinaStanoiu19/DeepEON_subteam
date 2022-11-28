@@ -1,6 +1,6 @@
 import pygame
 from stable_baselines3 import DQN
-from envs.custom_env import CustomEnv
+from envs.custom_env2 import CustomEnv
 import cv2
 
 SCREEN_WIDTH = 920
@@ -20,6 +20,7 @@ def record():
 game_config = {
   "solution_reward": 10,
   "rejection_reward": -10,
+  "move_reward": -1,
   "left_reward": 0,
   "right_reward": 0,
   "seed": 0
@@ -28,7 +29,7 @@ game_config = {
 
 env = CustomEnv(game_config)
 
-model = DQN.load("Models\deepq_EON5")
+model = DQN.load("Models/pleasant-lion-1/model.zip")
 print("loaded")
 
 env.highscore = 0
