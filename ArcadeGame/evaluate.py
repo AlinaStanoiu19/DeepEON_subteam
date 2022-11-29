@@ -49,7 +49,7 @@ def evaluate(
     return episode_rewards, episode_lengths
 
 
-n_episodes = 100
+n_episodes = 1000
 game_config = {
   "solution_reward": 10,
   "rejection_reward": -10,
@@ -61,10 +61,10 @@ game_config = {
 env = CustomEnv(game_config)
 env.seed(0)
 kwargs = {"policy_kwargs":{"replay_buffer_kwargs":True}}
-model = DQN.load("Models/pleasant-lion-1/model",kwargs=kwargs)
+model = DQN.load("Models/curious-water-6/model",kwargs=kwargs)
 print("Loaded")
 model.set_env(env)
 episode_rewards, episode_lengths = evaluate(model,env,n_episodes,render=False)
 index = np.arange(0,n_episodes)
 df = pd.DataFrame({"index":index,"Episode Rewards":np.array(episode_rewards), "Episode Lengths": np.array(episode_lengths)})
-df.to_json("Evaluation_data/evaluation_pleasant-lion-1.json")
+df.to_json("Evaluation_data/evaluation_curious-water-6.json")

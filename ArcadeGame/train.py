@@ -33,7 +33,7 @@ model_config = {
   "learning_starts":50000,
   "target_update_interval":10000,
   "train_freq":4,
-  "total_timesteps":100000
+  "total_timesteps":500000
 }
 
 config = model_config

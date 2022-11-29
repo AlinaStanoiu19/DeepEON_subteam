@@ -9,7 +9,7 @@ import datetime as dt
 import os
  
 K = 5
-episode_count_targets = 100
+episode_count_targets = 1000
 game_config = {
   "solution_reward": 10,
   "rejection_reward": -10,
@@ -62,5 +62,5 @@ time = dt.datetime
 
 if not os.path.exists("./Evaluation_data"):
     os.makedirs("./Evaluation_data")
-df.to_json("./Evaluation_data/evaluation_huristic_2.json")
+df.to_json("./Evaluation_data/evaluation_huristic_ce2.json")
     
