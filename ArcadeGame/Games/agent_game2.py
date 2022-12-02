@@ -165,20 +165,10 @@ class ArcadeGame:
                 pass
 
     def check_spectrum(self, link):
-        if not(self.rps[link].size == 0):  # the link is not completely full
-            if (self.current_node == self.source):  # we are at the first link in the path
-                # print(f"we are checking the link: {link}")
-                if (self.check_with_link_grid(link)):
-                    return True
-                else:
-                    return False
-            else: 
-                if (self.check_with_link_grid(link) and self.check_with_history(link)):
-                    return True
-                else: 
-                    return False
-        else: 
+        if (self.rps[link].size == 0):  # link is completely full
             return False
+        else:
+            return(self.check_with_link_grid(link) and self.check_with_history(link))
 
     def check_with_link_grid(self,link):
         unavailable_options = []
@@ -194,6 +184,9 @@ class ArcadeGame:
 
 
     def check_with_history(self,link):
+        
+        if (self.current_node == self.source):
+            return True
 
         unavailable_options = []
         for option_index in range(len(self.rps[link])):
