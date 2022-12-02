@@ -177,10 +177,7 @@ class ArcadeGame:
                 unavailable_options.append(option_index)
         self.rps[link] = np.delete(self.rps[link],unavailable_options,axis=0)
         # print(f"this is the rsp after checking: {self.rps[link]} and the size: {len(self.rps[link])}")
-        if(self.rps[link].size == 0):
-            return False
-        else: 
-            return True
+        return bool(self.rps[link].size)
 
 
     def check_with_history(self,link):
