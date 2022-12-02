@@ -197,13 +197,9 @@ class ArcadeGame:
             if not(option_available == len(self.route_of_links)):
                 unavailable_options.append(option_index)
         
-
         self.rps[link] = np.delete(self.rps[link],unavailable_options,axis=0)
-        if(self.rps[link].size == 0):
-            return False
-        else: 
-            return True
 
+        return bool(self.rps[link].size)
 
     def update_link_grid(self): 
         # update the link grid with the first fit, so the first option available in the rps array  
