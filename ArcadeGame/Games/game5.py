@@ -4,7 +4,9 @@ import pygame
 import numpy as np
 import networkx as nx
 import sys
-import cv2
+
+from config import all_configs
+
 SCREEN_WIDTH = 920
 SCREEN_HEIGHT = 150
 COLUMN_COUNT = 8
@@ -17,8 +19,7 @@ RED = (255,0,0)
 
 class ArcadeGame:
 
-    def __init__(self, config):
-        self.config = config
+    def __init__(self):
         self.window = (SCREEN_WIDTH,SCREEN_HEIGHT)
         self.background = pygame.Surface(self.window)
         self.highscore = 0
@@ -83,14 +84,14 @@ class ArcadeGame:
     def check_solution(self):
         done = False
         if self.is_solution():
-            reward = self.config["solution_reward"]
-            self.score += self.config["solution_reward"]
+            reward = all_configs["solution_reward"]
+            self.score += all_configs["solution_reward"]
             self.update_link_grid()
             self.new_round()
         else:
             self.blocks += 1
-            reward = self.config["rejection_reward"]
-            self.score += self.config["rejection_reward"]
+            reward = all_configs["rejection_reward"]
+            self.score += all_configs["rejection_reward"]
             if self.blocks > 2:
                 if self.score > self.highscore:
                     self.highscore = self.score
@@ -140,7 +141,7 @@ class ArcadeGame:
             self.link_grid[edge] = grid
 
     def seed(self):
-        np.random.seed(self.config["seed"])
+        np.random.seed(all_configs["seed"])
 
     def exit(self):
         pygame.quit()

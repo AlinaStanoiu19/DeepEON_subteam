@@ -1,36 +1,40 @@
 import pygame
 from stable_baselines3 import DQN
-from envs.custom_env2 import CustomEnv
+from envs.custom_env2 import CustomEnv as CustomEnv2
+from envs.custom_env3 import CustomEnv as CustomEnv3
 import cv2
+import os
+from config import current_dir, full_name, all_configs
 
-SCREEN_WIDTH = 920
-SCREEN_HEIGHT = 150
+
+SCREEN_HEIGHT = all_configs["height"]
+SCREEN_WIDTH = all_configs["width"]
+
+if all_configs["env"] == 2:
+    env = CustomEnv2()
+elif all_configs["env"] == 3:
+    env = CustomEnv3()
+else:
+    print("env not selected correctly in config.py")
+    exit(1)
 
 
 def record():
     print("saving..")
     height, width, layers = frame_array[0].shape
-    out = cv2.VideoWriter('video2.mp4',cv2.VideoWriter_fourcc(*'mp4v'), 20, (width,height))
+    out = cv2.VideoWriter(
+        os.path.join(current_dir, "Recordings", f"video_{full_name}.mp4"),
+        cv2.VideoWriter_fourcc(*"mp4v"),
+        20,
+        (width, height),
+    )
     for i in range(len(frame_array)):
         out.write(frame_array[i])
     out.release()
-        
 
 
-game_config = {
-  "solution_reward": 10,
-  "rejection_reward": -10,
-  "move_reward": -1,
-  "left_reward": 0,
-  "right_reward": 0,
-  "seed": 0
-}
-
-
-env = CustomEnv(game_config)
-
-model = DQN.load("Models/pleasant-lion-1/model.zip")
-print("loaded")
+model = DQN.load(os.path.join(current_dir, "Models", f"{full_name}", "model"))
+print("model loaded")
 
 env.highscore = 0
 frame_array = []
@@ -42,9 +46,8 @@ while episodes < 10:
     while not done:
         action, _states = model.predict(obs)
         obs, rewards, done, info = env.step(action)
-        frame = env.render(mode='rgb_array')
+        frame = env.render(mode="rgb_array")
         frame_array.append(frame)
-        
+
 record()
 env.close()
-    

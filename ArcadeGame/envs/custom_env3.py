@@ -6,11 +6,13 @@ from Games.agent_game2 import ArcadeGame, SCREEN_HEIGHT,SCREEN_WIDTH, COLUMN_COU
 class CustomEnv(Env):
     metadata = {'render.modes': ['human', 'rgb_array']}
     num_envs = 1
-    def __init__(self, config):
-        self.config = config 
-        self.game = ArcadeGame(self.config)
+    def __init__(self):
+        # self.config = config 
+        self.game = ArcadeGame()
         self.action_space = spaces.Discrete(6)
-        self.observation_space = spaces.Box(shape= (SCREEN_WIDTH, SCREEN_HEIGHT, 3),low=0,high=255,dtype=np.uint8)
+        self.observation_space = spaces.Box(
+            shape= (SCREEN_WIDTH, SCREEN_HEIGHT, 3),low=0,high=255,dtype=np.uint8
+        )
     
     def step(self, action):
         reward, done, info = 0, False, {} 

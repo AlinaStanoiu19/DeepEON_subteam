@@ -1,66 +1,57 @@
 from datetime import datetime
-import pygame
-from stable_baselines3 import DQN
-from envs.custom_env2 import CustomEnv
 from Games.game5 import ArcadeGame
 import numpy as np
 import pandas as pd
-import datetime as dt
 import os
+from config import current_dir, all_configs, full_name
+
+
+NUMBER_OF_SLOTS = all_configs["number_of_slots"]
+K = all_configs["K"]
+episode_count_targets = all_configs["number_of_episodes_evaluated"]
+SOLUTION_REWARD = all_configs["solution_reward"]
  
-K = 5
-episode_count_targets = 1000
-game_config = {
-  "solution_reward": 10,
-  "rejection_reward": -10,
-  "move_reward": -1,
-  "left_reward": 0,
-  "right_reward": 0,
-  "seed": 1
-}
- 
-game = ArcadeGame(game_config)
+game = ArcadeGame()
 episode_count = 0
 episode_rewards = []
 while episode_count < episode_count_targets:
     episode_reward = 0
-    fs = 0
     done = False
     game.new_game()
     game.draw_screen()
-    game.render()
+    #game.render()
     while not done:
         solution = False
         for k in range(K):
-            for i in range(8-game.slots):
-                first_slot = k*9 + i
-                if game.is_solution(first_slot=first_slot):
+            for i in range(
+                NUMBER_OF_SLOTS - game.slots + 1
+            ):  # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+                first_slot = k * (NUMBER_OF_SLOTS + 1) + i
+                if game.is_solution(first_slot=first_slot) == SOLUTION_REWARD:
                     solution = True
-                    fs = first_slot
+                    game.first_slot = first_slot
                     break
             if solution:
                 break
-
-        game.first_slot = fs
+        if not solution:
+            game.first_slot = 0
         game.update_spec_grid()
         game.draw_screen()
-        game.render()
+        # game.render()
         reward, done = game.check_solution()
         episode_reward += reward
-        print(episode_reward)
-    
+        # print(episode_reward)
+
     episode_rewards.append(episode_reward)
     episode_count += 1
+    print(episode_count)
     
     
 mean_reward = np.mean(episode_rewards)
 std_reward = np.std(episode_rewards)
 print(mean_reward)
-index = np.arange(0,episode_count_targets)
-df = pd.DataFrame({"index":index,"Episode Rewards":np.array(episode_rewards)})
-time = dt.datetime 
-
-if not os.path.exists("./Evaluation_data"):
-    os.makedirs("./Evaluation_data")
-df.to_json("./Evaluation_data/evaluation_huristic_ce2.json")
-    
+index = np.arange(0, episode_count_targets)
+df = pd.DataFrame({"index": index, "Episode Rewards": np.array(episode_rewards)})
+df.to_json(
+    os.path.join(current_dir, "Evaluations", f"heuristic_evaluation_{full_name}_{NUMBER_OF_SLOTS}_{episode_count_targets}.json")
+)

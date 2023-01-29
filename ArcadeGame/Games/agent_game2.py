@@ -6,22 +6,22 @@ import random
 import networkx as nx
 import sys
 from typing import OrderedDict
+from config import all_configs
 
-SPECTRUM_SLOTS = 8
+SPECTRUM_SLOTS = all_configs["number_of_slots"]
 SCREEN_WIDTH = 920
 SCREEN_HEIGHT = 150
 COLUMN_COUNT = 6
 WIDTH = 20
 HEIGHT = 20
-WHITE = (255,255,255)
-BLACK = (0,0,0)
-GREEN = (0,255,0)
-RED = (255,0,0)
+WHITE = all_configs["white"]
+BLACK = all_configs["black"]
+GREEN = all_configs["green"]
+RED = all_configs["red"]
 
 class ArcadeGame:
 
-    def __init__(self, config):
-        self.config = config
+    def __init__(self):
         self.window = (SCREEN_WIDTH,SCREEN_HEIGHT)
         self.background = pygame.Surface(self.window)
         self.highscore = 0
@@ -114,7 +114,7 @@ class ArcadeGame:
             # check if it is the destination 
             if (self.current_node == self.target):
                 # print("You  have reached the destination")
-                reward = self.config["solution_reward"]
+                reward = all_configs["solution_reward"]
                 print(f"!!! Target reached ({reward})")
                 self.score += 720/len(self.constructed_path)
                 self.update_link_grid()
@@ -123,9 +123,9 @@ class ArcadeGame:
 
         else: 
             self.blocks += 1
-            reward = self.config["rejection_reward"]
+            reward = all_configs["rejection_reward"]
             print(f"! Rejection ({reward})")
-            self.score += self.config["rejection_reward"]
+            self.score += all_configs["rejection_reward"]
             if (self.blocks > 3):
                 # print("Game has ended")
                 done = True
@@ -232,7 +232,7 @@ class ArcadeGame:
         # print(f"Number of blocks: {self.blocks} Score: {self.score} High Score: {self.highscore}")
 
     def seed(self):
-        np.random.seed(self.config["seed"])
+        np.random.seed(all_configs["seed"])
 
     def exit(self):
         pygame.quit()
