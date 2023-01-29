@@ -1,7 +1,7 @@
 from datetime import datetime
 import pygame
 from stable_baselines3 import DQN
-from envs.custom_env import CustomEnv
+from envs.custom_env2 import CustomEnv
 from Games.game5 import ArcadeGame
 import numpy as np
 import pandas as pd
@@ -9,10 +9,11 @@ import datetime as dt
 import os
  
 K = 5
-episode_count_targets = 10
+episode_count_targets = 1000
 game_config = {
   "solution_reward": 10,
   "rejection_reward": -10,
+  "move_reward": -1,
   "left_reward": 0,
   "right_reward": 0,
   "seed": 1
@@ -59,7 +60,7 @@ index = np.arange(0,episode_count_targets)
 df = pd.DataFrame({"index":index,"Episode Rewards":np.array(episode_rewards)})
 time = dt.datetime 
 
-if not os.path.exists("./Evaluation data"):
-    os.makedirs("./Evaluation data")
-df.to_json("./Evaluation data/evaluation_huristic_2.json")
+if not os.path.exists("./Evaluation_data"):
+    os.makedirs("./Evaluation_data")
+df.to_json("./Evaluation_data/evaluation_huristic_ce2.json")
     

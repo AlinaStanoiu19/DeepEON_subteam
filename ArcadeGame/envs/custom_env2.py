@@ -16,25 +16,28 @@ class CustomEnv(Env):
         reward, done, info = 0, False, {} 
 
         if action == 0 and self.game.position < (COLUMN_COUNT)-1: # RIGHT
+            print("Move RIGHT")
             self.game.position +=1
             self.game.update_spec_grid()
             reward = self.config["right_reward"]
-            print(f"you have received a reward: 0")
         elif action == 1 and self.game.position > 0: #LEFT
+            print("Move LEFT")
             self.game.position -=1
             self.game.update_spec_grid()
             reward = self.config["left_reward"]
-            print(f"you have received a reward: 0")
         elif action == 2: # ENTER
+            print("ENTER")
             reward, done = self.game.check_solution(self.game.position + 1) # implement this function
-            
+
+        print(f"Number of blocks: {self.game.blocks} Score: {self.game.score} High Score: {self.game.highscore}")
+
         observation = self.game.draw_screen()
 
         return observation, reward, done, info
 
     def reset(self):
         self.game.new_game()
-        print("this is a NEW GAMEEE")
+        print("--- NEW GAME ---")
         observation = self.game.draw_screen()
         return observation 
 

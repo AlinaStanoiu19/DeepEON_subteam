@@ -2,15 +2,15 @@ from itertools import islice
 from pickletools import pystring
 import pygame 
 import numpy as np
+import random
 import networkx as nx
 import sys
-import cv2
 from typing import OrderedDict
 
 SPECTRUM_SLOTS = 8
 SCREEN_WIDTH = 920
 SCREEN_HEIGHT = 150
-COLUMN_COUNT = 8
+COLUMN_COUNT = 6
 WIDTH = 20
 HEIGHT = 20
 WHITE = (255,255,255)
@@ -42,28 +42,28 @@ class ArcadeGame:
         self.new_round()
 
     def new_round(self):
-        """
-        Sets up all parameters for a new round, one roud = one request 
-        """
-        print("this is a NEW ROUND")
-        self.position = 0 
+        print("-   NEW ROUND   -")
+        first_slot = 0
         self.slots = np.random.randint(2,5) 
-        self.target = np.random.randint(2,7)
-        self.source = np.random.randint(1,self.target)
+        self.target, self.source = random.sample(range(1,7), 2)
+        print(f"Target: {self.target} | Source: {self.source} | Slots: {self.slots}")
+
+        self.position = self.source-1
         self.current_node = self.source
         self.next_node = self.source
         self.constructed_path = [self.source]
         self.route_of_links = []
+
         rps_array = np.zeros((SPECTRUM_SLOTS+1-self.slots,SPECTRUM_SLOTS),dtype=int)
-        first_slot = 0
+
         for option in range(SPECTRUM_SLOTS+1-self.slots):
             rps_array[option][first_slot:(first_slot+self.slots)] = np.ones(self.slots, dtype=int)
             first_slot += 1
+
         self.rps = {key: rps_array for key in self.edges}
         self.update_spec_grid() 
         self.nodes_availability = {key: [] for key in self.nodes}
         self.update_node_availability()
-        # print(f"this is the request: (sorce: {self.source},destination: {self.target}, scpectrum slots: {self.slots})")
 
     def draw_screen(self):
         self.background.fill(RED)
@@ -115,7 +115,7 @@ class ArcadeGame:
             if (self.current_node == self.target):
                 # print("You  have reached the destination")
                 reward = self.config["solution_reward"]
-                print(f"you have received a reward: 10")
+                print(f"!!! Target reached ({reward})")
                 self.score += 720/len(self.constructed_path)
                 self.update_link_grid()
                 # print(f"this is the updated link grid: {self.link_grid}")
@@ -124,7 +124,7 @@ class ArcadeGame:
         else: 
             self.blocks += 1
             reward = self.config["rejection_reward"]
-            print(f"you have received a reward: -10")
+            print(f"! Rejection ({reward})")
             self.score += self.config["rejection_reward"]
             if (self.blocks > 3):
                 # print("Game has ended")
@@ -223,7 +223,7 @@ class ArcadeGame:
     def update_spec_grid(self):
         self.spec_grid = np.zeros(COLUMN_COUNT, dtype= int)
         self.spec_grid[self.position] = 1
-        # print(f"Current node selection grid: {self.spec_grid}")
+        print(f"Current node selection grid: {self.spec_grid}")
 
     def render(self):
         self.screen = pygame.display.set_mode(self.window)

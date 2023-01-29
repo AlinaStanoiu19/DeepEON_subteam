@@ -1,7 +1,7 @@
 from gym import Env
 from gym import spaces
 import numpy as np
-from Games.agent_game1 import ArcadeGame, SCREEN_HEIGHT, SCREEN_WIDTH
+from Games.agent_game1 import ArcadeGame, SCREEN_HEIGHT, SCREEN_WIDTH, COLUMN_COUNT
 
 class CustomEnv(Env):
     metadata = {'render.modes': ['human', 'rgb_array']}
@@ -15,7 +15,7 @@ class CustomEnv(Env):
     def step(self, action):
         reward, done, info = 0, False, {} 
 
-        if action == 0 and self.game.position < 5: # RIGHT
+        if action == 0 and self.game.position < (COLUMN_COUNT)-1: # RIGHT
             print("Move RIGHT")
             self.game.position +=1
             self.game.update_spec_grid()
@@ -30,8 +30,7 @@ class CustomEnv(Env):
             reward, done = self.game.check_node()
 
         print(f"Number of blocks: {self.game.blocks} Score: {self.game.score} High Score: {self.game.highscore}")
-
-            
+           
         observation = self.game.draw_screen()
 
         return observation, reward, done, info
