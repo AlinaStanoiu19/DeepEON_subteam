@@ -88,6 +88,7 @@ class ArcadeGame:
             self.score += all_configs["solution_reward"]
             self.update_link_grid()
             self.new_round()
+            print(f"SOLUTION TRUE {reward}")
         else:
             self.blocks += 1
             reward = all_configs["rejection_reward"]
@@ -96,6 +97,7 @@ class ArcadeGame:
                 if self.score > self.highscore:
                     self.highscore = self.score
                 done = True
+            print(f"SOLUTION FALSE {reward}")
         return reward, done
 
     def is_solution(self, first_slot = -1):

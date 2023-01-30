@@ -24,10 +24,10 @@ while episode_count < episode_count_targets:
         solution = False
         for k in range(K):
             for i in range(
-                NUMBER_OF_SLOTS - game.slots + 1
+                NUMBER_OF_SLOTS - game.slots
             ):  # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
                 first_slot = k * (NUMBER_OF_SLOTS + 1) + i
-                if game.is_solution(first_slot=first_slot) == SOLUTION_REWARD:
+                if game.is_solution(first_slot=first_slot):
                     solution = True
                     game.first_slot = first_slot
                     break
@@ -44,7 +44,7 @@ while episode_count < episode_count_targets:
 
     episode_rewards.append(episode_reward)
     episode_count += 1
-    print(episode_count)
+    print(f"EPISODE: {episode_count}")
     
     
 mean_reward = np.mean(episode_rewards)
