@@ -16,13 +16,6 @@ import numpy as np
 
 epochs = 1
 
-with open("sweep.yaml", "r") as stream:
-    try:
-        sweep_data = yaml.safe_load(stream)
-    except yaml.YAMLError as exc:
-        print(exc)
-sweep_id = wandb.sweep(sweep=sweep_data, project='my-first-sweep')
-
 parse = False
 # Build your ArgumentParser however you like
 def setup_parser():
@@ -49,7 +42,6 @@ elif model_config["env"] == 3:
 else:
     print("env not selected correctly in config.py")
     exit(1)
-
 if parse:
     parser = setup_parser()
 
@@ -75,18 +67,25 @@ if parse:
         "learning_starts": int(args.learning_starts),
         "target_update_interval": int(args.target_update_interval),
         "train_freq": int(args.train_freq),
-        "total_timesteps": int(args.total_timesteps),
+        "total_timesteps": config.get("total_timesteps"),
     }
 
     config = args_config
+
 def main():
+
+    with open("sweep.yaml", "r") as stream:
+        try:
+            sweep_data = yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
+
     wandb.init(
         project="EON",
         config=config,
         sync_tensorboard=True,  # auto-upload sb3's tensorboard metrics
     )
-    wandb.agent(sweep_id, function=main, count=4)
-
+    
     learning_rate  =  wandb.config.learning_rate
     batch_size = wandb.config.batch_size
     gamma = wandb.config.gamma
@@ -98,7 +97,6 @@ def main():
     train_freq = wandb.config.train_freq
 
     for epoch in np.arange(1, epochs):
-
         model = DQN(
             CnnPolicy,
             env,
@@ -131,8 +129,9 @@ def main():
             'mean_reward': mean_reward,
             'std_reward': std_reward, 
         })
-# wandb.run.finish()
 
 main()
-
-env.close()
+#sweep_id = wandb.sweep(sweep=sweep_data, project='my-first-sweep')
+##wandb.agent(sweep_id, function=main, count=4)
+# wandb.run.finish()
+# env.close()
