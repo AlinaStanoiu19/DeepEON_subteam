@@ -14,6 +14,7 @@ from envs.custom_env3 import CustomEnv as CustomEnv3
 import yaml
 import numpy as np
 
+epochs = 1
 
 with open("sweep.yaml", "r") as stream:
     try:
@@ -88,7 +89,6 @@ def main():
 
     learning_rate  =  wandb.config.learning_rate
     batch_size = wandb.config.batch_size
-    epochs = wandb.config.epochs
     gamma = wandb.config.gamma
     buffer_size = wandb.config.buffer_size
     exploration_fraction = wandb.config.exploration_fraction
@@ -132,4 +132,7 @@ def main():
             'std_reward': std_reward, 
         })
 # wandb.run.finish()
+
+main()
+
 env.close()

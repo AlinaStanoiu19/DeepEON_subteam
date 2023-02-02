@@ -1,8 +1,8 @@
-method: bayes
-name: sweep
+program: train.py
+method: random
 metric:
+  name: validation_loss
   goal: minimize
-  name: loss
 parameters: 
   gamma: 
     distribution: categorical
@@ -34,6 +34,3 @@ parameters:
   train_freq:
     distribution: categorical
     values: [1, 4, 8, 16, 128, 256, 1000]
-  epochs: 
-    distribution: categorical
-    values: [1, 5, 10, 15]
