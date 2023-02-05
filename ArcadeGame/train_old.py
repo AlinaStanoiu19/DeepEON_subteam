@@ -1,6 +1,7 @@
 from random import seed
 from stable_baselines3.dqn.policies import CnnPolicy
 from stable_baselines3.dqn.dqn import DQN
+from stable_baselines3.common.evaluation import evaluate_policy
 from wandb.integration.sb3 import WandbCallback
 import wandb
 import argparse
@@ -10,7 +11,10 @@ import pathlib
 from config import current_dir, full_name, model_config
 from envs.custom_env2 import CustomEnv as CustomEnv2
 from envs.custom_env3 import CustomEnv as CustomEnv3
+import yaml
+import numpy as np
 
+epochs = 1
 
 parse = False
 # Build your ArgumentParser however you like
@@ -38,7 +42,6 @@ elif model_config["env"] == 3:
 else:
     print("env not selected correctly in config.py")
     exit(1)
-
 if parse:
     parser = setup_parser()
 
@@ -64,43 +67,71 @@ if parse:
         "learning_starts": int(args.learning_starts),
         "target_update_interval": int(args.target_update_interval),
         "train_freq": int(args.train_freq),
-        "total_timesteps": int(args.total_timesteps),
+        "total_timesteps": config.get("total_timesteps"),
     }
 
     config = args_config
 
-wandb.init(
-    project="EON",
-#    entity="deepeon",
-#    name=full_name,
-    config=config,
-    sync_tensorboard=True,  # auto-upload sb3's tensorboard metrics
-)
+def main():
 
-model = DQN(
-    CnnPolicy,
-    env,
-    verbose=1,
-    tensorboard_log=os.path.join("tensorboardEON", wandb.run.name),
-    learning_starts=config["learning_starts"],
-    buffer_size=config["buffer_size"],
-    batch_size=config["batch_size"],
-    exploration_final_eps=config["exploration_final_eps"],
-    exploration_fraction=config["exploration_fraction"],
-    gamma=config["gamma"],
-    learning_rate=config["learning_rate"],
-    train_freq=config["train_freq"],
-)
+    with open("sweep.yaml", "r") as stream:
+        try:
+            sweep_data = yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
 
+    run = wandb.init(
+        project="EON",
+        config=config,
+        sync_tensorboard=True,  # auto-upload sb3's tensorboard metrics
+    )
+    
+    learning_rate  =  wandb.config.learning_rate
+    batch_size = wandb.config.batch_size
+    gamma = wandb.config.gamma
+    buffer_size = wandb.config.buffer_size
+    exploration_fraction = wandb.config.exploration_fraction
+    exploration_final_eps = wandb.config.exploration_final_eps
+    target_update_interval = wandb.config.target_update_interval
+    learning_starts = wandb.config.learning_starts
+    train_freq = wandb.config.train_freq
 
-model.learn(
-    total_timesteps=config["total_timesteps"],
-    callback=WandbCallback(
-        model_save_path=os.path.join(current_dir, "Models", full_name),
-        verbose=2,
-    ),
-    tb_log_name=full_name,
-    reset_num_timesteps=False,
-)
-wandb.run.finish()
-env.close()
+    for epoch in np.arange(1, epochs):
+        model = DQN(
+            CnnPolicy,
+            env,
+            verbose=1,
+            tensorboard_log=os.path.join("tensorboardEON", wandb.run.name),
+            learning_starts=learning_starts,
+            buffer_size=buffer_size,
+            batch_size=batch_size,
+            exploration_final_eps=exploration_final_eps,
+            exploration_fraction=exploration_fraction,
+            target_update_interval=target_update_interval,
+            gamma=gamma,
+            learning_rate=learning_rate,
+            train_freq=train_freq,
+        )
+
+        model.learn(
+            total_timesteps=config["total_timesteps"],
+            callback=WandbCallback(
+                model_save_path=os.path.join(current_dir, "Models", full_name),
+                verbose=2,
+            ),
+            tb_log_name=full_name,
+            reset_num_timesteps=False,
+        )
+        mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=10)
+
+        wandb.log({
+            'epoch': epoch, 
+            'mean_reward': mean_reward,
+            'std_reward': std_reward, 
+        })
+
+main()
+#sweep_id = wandb.sweep(sweep=sweep_data, project='my-first-sweep')
+##wandb.agent(sweep_id, function=main, count=4)
+# wandb.run.finish()
+# env.close()
