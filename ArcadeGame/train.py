@@ -102,5 +102,6 @@ model.learn(
     tb_log_name=full_name,
     reset_num_timesteps=False,
 )
+
 wandb.run.finish()
 env.close()
