@@ -49,6 +49,17 @@ class GameView(arcade.View):
         self.text_box(8,12,4,arcade.color.PINK,"Score: {}".format(self.score))
         self.text_box(1,12,6,arcade.color.PINK,"High Score: {}".format(self.high_score))
 
+        raw = 2
+        column = COLUMN_COUNT + 2
+        # network represemtation 
+        for edge in self.edges:
+            self.text_box(column , raw,2 , arcade.color.CANDY_APPLE_RED, str(edge))
+            for slot in range(len(self.link_grid[edge])):
+                if self.link_grid[edge][slot] == 0:
+                    self.text_box(column + 2 + slot, raw,1 , arcade.color.WHITE)
+                else:
+                    self.text_box(column + 2 + slot, raw,1 , arcade.color.BLACK)
+            raw = raw + 1 
 
     def text_box(self,col,row,width,colour,text=None):
         """

@@ -11,41 +11,27 @@ class CustomEnv(Env):
         self.game = ArcadeGame(self.config)
         self.action_space = spaces.Discrete(6)
         self.observation_space = spaces.Box(shape= (SCREEN_WIDTH, SCREEN_HEIGHT, 3),low=0,high=255,dtype=np.uint8)
+        self.episode_actions = []
+        self.episode_rewards = []
     
     def step(self, action):
         reward, done, info = 0, False, {} 
         print(f"Action: {action}")
-        if action == 0: 
-            self.game.position = 0 # teleport to slot
-            self.game.update_spec_grid()
-            reward, done = self.game.check_solution(self.game.position + 1)
-        elif action == 1: 
-            self.game.position = 1 # teleport to slot
-            self.game.update_spec_grid()
-            reward, done = self.game.check_solution(self.game.position + 1)
-        elif action == 2: 
-            self.game.position = 2 # teleport to slot
-            self.game.update_spec_grid()
-            reward, done = self.game.check_solution(self.game.position + 1)
-        elif action == 3: 
-            self.game.position = 3 # teleport to slot
-            self.game.update_spec_grid()
-            reward, done = self.game.check_solution(self.game.position + 1)
-        elif action == 4: 
-            self.game.position = 4 # teleport to slot
-            self.game.update_spec_grid()
-            reward, done = self.game.check_solution(self.game.position + 1)
-        elif action == 5: 
-            self.game.position = 5 # teleport to slot
-            self.game.update_spec_grid()
-            reward, done = self.game.check_solution(self.game.position + 1)
-            
-        observation = self.game.draw_screen()
+        self.episode_actions.append(action)
+        self.game.position = action # teleport to slot
+        self.game.update_spec_grid
+        reward, done = self.game.check_solution(self.game.position + 1)
+        self.episode_rewards.append(reward)
 
+        self.render(mode='human')
+        observation = self.game.draw_screen()
+        info = {'episode_actions': self.episode_actions, 'episode_rewards': self.episode_rewards }
         return observation, reward, done, info
 
     def reset(self):
         self.game.new_game()
+        self.episode_actions = []
+        self.episode_rewards = []
         observation = self.game.draw_screen()
         return observation 
 

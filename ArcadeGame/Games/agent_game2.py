@@ -30,8 +30,9 @@ class ArcadeGame:
         self.G.add_edges_from(self.edges)
         self.seed()
     
-    def new_game(self):
-        print("this is a NEW GAMEEE")
+    def new_game(self): 
+        # this is the equivalent of an episode 
+        print("new episode")
         self.score = 0
         self.blocks = 0
         self.link_grid = OrderedDict()
@@ -88,7 +89,19 @@ class ArcadeGame:
             else:
                 self.draw_box(column+1,4,GREEN)
 
+        raw = 2
+        column = COLUMN_COUNT + 2
+        # network represemtation 
+        for edge in self.edges:
+            for slot in range(len(self.link_grid[edge])):
+                if self.link_grid[edge][slot] == 0:
+                    self.draw_box(column  + slot, raw , WHITE)
+                else:
+                    self.draw_box(column  + slot, raw , BLACK)
+            raw = raw + 1 
+
         self.surfarr = pygame.surfarray.array3d(self.background)
+        # pygame.image.save(self.surfarr , f"s{str(self.source)}_t{str(self.target)}_c{str(self.current_node)}_screenshot.jpg")
         return self.surfarr
 
     def draw_box(self,col,row,colour):
@@ -107,7 +120,6 @@ class ArcadeGame:
         done = False
         self.next_node = node
         reward = 0 # should not be like this
-
         if self.next_node in self.nodes_availability[self.current_node]: 
             # move to node 
             self.move_to_node()
@@ -127,9 +139,8 @@ class ArcadeGame:
             print(f"you have received a reward: -10")
             self.score += self.config["rejection_reward"]
             if (self.blocks > 3):
-                # print("Game has ended")
+                # when done is set to true the episode ends and a new_game is called from the reset method
                 done = True
-                self.new_game()
 
         return reward, done
 
