@@ -79,7 +79,7 @@ model = DQN(CnnPolicy, env,  verbose=1, buffer_size = 5000)
 # callback = ExplainabilityCallback(log_dir=log_dir)
 
 # train the agent 
-time_steps = 100
+time_steps = 500000
 model.learn(total_timesteps=int(time_steps))
 # model.learn(total_timesteps=int(time_steps), callback=callback)
 
