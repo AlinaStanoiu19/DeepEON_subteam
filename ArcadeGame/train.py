@@ -1,7 +1,7 @@
 from random import seed
 from stable_baselines3.dqn import CnnPolicy
 from stable_baselines3 import DQN
-from envs.custom_env2 import CustomEnv
+from envs.custom_env3 import CustomEnv
 from wandb.integration.sb3 import WandbCallback
 import wandb
 import argparse
