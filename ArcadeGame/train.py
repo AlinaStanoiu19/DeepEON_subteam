@@ -75,6 +75,7 @@ wandb.init(
 #    name=full_name,
     config=config,
     sync_tensorboard=True,  # auto-upload sb3's tensorboard metrics
+    dir=None
 )
 
 model = DQN(
