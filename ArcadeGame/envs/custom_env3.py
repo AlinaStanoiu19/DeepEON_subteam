@@ -23,7 +23,7 @@ class CustomEnv(Env):
         reward, done = self.game.check_solution(self.game.position + 1)
         self.episode_rewards.append(reward)
 
-        self.render(mode='human')
+        # self.render(mode='human')
         observation = self.game.draw_screen()
         info = {'episode_actions': self.episode_actions, 'episode_rewards': self.episode_rewards }
         return observation, reward, done, info
