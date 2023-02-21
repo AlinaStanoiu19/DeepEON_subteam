@@ -1,8 +1,7 @@
-
 from stable_baselines3.common import base_class
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3 import DQN
-from envs.custom_env import CustomEnv
+from envs.custom_env3 import CustomEnv
 import numpy as np
 import gym
 from typing import Optional
@@ -16,7 +15,7 @@ import pandas as pd
 def evaluate(
     model: "base_class.BaseAlgorithm",
     env: gym.Env,
-    n_eval_episodes: int = 100,
+    n_eval_episodes: int = 1000,
     deterministic: bool = False,
     render: bool = False,
 ):
@@ -49,21 +48,22 @@ def evaluate(
     return episode_rewards, episode_lengths
 
 
-n_episodes = 100
+n_episodes = 1000
 game_config = {
   "solution_reward": 10,
   "rejection_reward": -10,
+  "move_reward": -1,
   "left_reward": 0,
   "right_reward": 0,
-  "seed": 1
+  "seed": 0
 }
 env = CustomEnv(game_config)
 env.seed(0)
 kwargs = {"policy_kwargs":{"replay_buffer_kwargs":True}}
-model = DQN.load("Models\mild-sweep-13\model",kwargs=kwargs)
+model = DQN.load("Models/elated-feather-14/model",kwargs=kwargs)
 print("Loaded")
 model.set_env(env)
 episode_rewards, episode_lengths = evaluate(model,env,n_episodes,render=False)
 index = np.arange(0,n_episodes)
 df = pd.DataFrame({"index":index,"Episode Rewards":np.array(episode_rewards), "Episode Lengths": np.array(episode_lengths)})
-df.to_json("Evaluation data\evaluation_mild-sweep-13.json")
+df.to_json("Evaluation_data/evaluation_elated-feather-14.json")
