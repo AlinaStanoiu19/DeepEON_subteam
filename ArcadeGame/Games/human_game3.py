@@ -14,6 +14,8 @@ SCREEN_WIDTH = 700
 SCREEN_HEIGHT = 350
 TIME = 30
 SPECTRUM_SLOTS = 8
+COLORS = [	(161, 202, 241), (114, 160, 193),(80, 114, 167),(0, 0, 255), 	(6, 42, 120),	(112, 41, 99),  (148, 87, 235),	(212, 115, 212)]
+
 
 class GameView(arcade.View):
     """
@@ -46,17 +48,31 @@ class GameView(arcade.View):
                 self.text_box(column+1,2,1,arcade.color.GREEN, str(self.current_node))
 
 
-        row = 3
+        row = 2
         column = COLUMN_COUNT + 2
+        i = 0
         # network represemtation 
+        
         for edge in self.edges:
+            edge_color = COLORS[i]
             self.text_box(column , row,2 , arcade.color.CANDY_APPLE_RED, str(edge))
+
             for slot in range(len(self.link_grid[edge])):
-                if self.link_grid[edge][slot] == 0:
-                    self.text_box(column + 2 + slot, row,1 , arcade.color.WHITE)
-                else:
+                if edge in self.route_of_links:
+                    if (self.rps[edge][0][slot] == 1) :
+                        self.text_box(column + 2 + slot, row,1 , arcade.color.GREEN)
+                    elif (self.link_grid[edge][slot] == 1): 
+                        self.text_box(column + 2 + slot, row,1 , arcade.color.BLACK)
+                    else:
+                        self.text_box(column + 2 + slot, row,1 , edge_color)
+        
+                elif (self.link_grid[edge][slot] == 1):
                     self.text_box(column + 2 + slot, row,1 , arcade.color.BLACK)
+                else:
+                    self.text_box(column + 2 + slot, row,1 , edge_color)
+                    
             row = row + 1 
+            i = i+1
 
         self.text_box(1,12,12,arcade.color.PINK,str(f"Request: (Source:{self.source}, Target:{self.target}, Slots:{self.slots})")) #print source node
         # self.text_box(18,12,4,arcade.color.PINK,"Topology") 
@@ -85,35 +101,57 @@ class GameView(arcade.View):
             return
 
 
-    def on_key_press(self, key, modifiers):
-        print("you pressed something ...")
-        if key == arcade.key.RIGHT and self.position < (COLUMN_COUNT)-1:
-            self.position+=1
-            self.update_spec_grid()
-        elif key == arcade.key.LEFT and self.position > 0:
-            self.position -=1
-            self.update_spec_grid()
-        elif key == arcade.key.ENTER:
-            self.next_node = self.position + 1
-            if self.next_node in self.nodes_availability[self.current_node]: 
-                # move to node 
-                self.move_to_node()
-                # check if it is the destination 
-                if (self.current_node == self.target):
-                    print("You  have reached the destination")
-                    self.score += 720/len(self.constructed_path)
-                    self.update_link_grid()
-                    print(f"this is the updated link grid: {self.link_grid}")
-                    self.new_round()
-                else: 
-                    print("Let's select the next node of the path, we are not there yet")
+    def enter(self):
+        self.next_node = self.position + 1
+        if self.next_node in self.nodes_availability[self.current_node]: 
+            # move to node 
+            self.move_to_node()
+            # check if it is the destination 
+            if (self.current_node == self.target):
+                print("You  have reached the destination")
+                self.score += 720/len(self.constructed_path)
+                self.update_link_grid()
+                print(f"this is the updated link grid: {self.link_grid}")
+                print("---------------------------------------------------------")
+                self.new_round()
             else: 
-                self.blocks += 1
-                if (self.blocks > 3):
-                    print("Game has ended")
-                    self.new_game()
+                print("Let's select the next node of the path, we are not there yet")
+        else: 
+            self.blocks += 1
+            if (self.blocks > 3):
+                print("Game has ended")
+                print("---------------------------------------------------------------")
+                self.new_game()
 
-    
+    def on_key_press(self, key, modifiers):
+        print(f"route of links so far: {self.route_of_links}")
+        if key == arcade.key.KEY_1:
+            self.position = 0
+            self.update_spec_grid()
+            self.enter()
+        elif key == arcade.key.KEY_2:
+            self.position = 1
+            self.update_spec_grid()
+            self.enter()
+        elif key == arcade.key.KEY_3:
+            self.position = 2
+            self.update_spec_grid()
+            self.enter()
+        elif key == arcade.key.KEY_4:
+            self.position = 3
+            self.update_spec_grid()
+            self.enter()
+        elif key == arcade.key.KEY_5:
+            self.position = 4
+            self.update_spec_grid()
+            self.enter()
+        elif key == arcade.key.KEY_6:
+            self.position = 5
+            self.update_spec_grid()
+            self.enter()
+        else: 
+            print("INVALID KEY")
+
     def move_to_node(self):
         # add the node to the self.constructed_path
         self.constructed_path.append(self.next_node)
@@ -129,18 +167,18 @@ class GameView(arcade.View):
         for node in self.nodes:
             if (node in self.constructed_path):
                 # make it black or don't add it to the availability
-                print("This node has been already visited")
+                print(f"Node {node} has been already visited")
             elif(self.link(self.current_node,node) in self.link_grid.keys()):  
-                print("there is a link to this node")
+                print(f"there is a link to node {node}")
                 # we have to check for spectrum on the link 
                 if (self.check_spectrum(self.link(self.current_node,node))):
                     self.nodes_availability[self.current_node].append(node)
                 else:
                     # make it black or don't add it to the availability
-                    print("there is no spectrum on this link")
+                    print(f"there is no spectrum on link {self.link(self.current_node,node)}")
             else: 
                 # make it black or don't add it to the availability
-                print("there is no link to this node")
+                print(f"there is no link to node {node}")
 
 
     
@@ -166,7 +204,7 @@ class GameView(arcade.View):
             if not all(item == 0 for item in np.bitwise_and(self.rps[link][option_index],self.link_grid[link])):
                 unavailable_options.append(option_index)
         self.rps[link] = np.delete(self.rps[link],unavailable_options,axis=0)
-        print(f"this is the rsp after checking: {self.rps[link]} and the size: {len(self.rps[link])}")
+        print(f"this is the rsp after checking with link grid: {self.rps[link]} and the size: {len(self.rps[link])}")
         if(self.rps[link].size == 0):
             return False
         else: 
@@ -181,11 +219,13 @@ class GameView(arcade.View):
             for previous_link in self.route_of_links:
                 if self.rps[link][option_index] in self.rps[previous_link]:
                     option_available +=1 
-            if not(option_available == len(self.route_of_links)):
+            if not(option_available == len(self.route_of_links)):  #this might not make sense 
                 unavailable_options.append(option_index)
         
 
         self.rps[link] = np.delete(self.rps[link],unavailable_options,axis=0)
+        print(f"this is the rsp after checking with history: {self.rps[link]} and the size: {len(self.rps[link])}")
+        
         if(self.rps[link].size == 0):
             return False
         else: 
@@ -194,7 +234,10 @@ class GameView(arcade.View):
 
     def update_link_grid(self): 
         # update the link grid with the first fit, so the first option available in the rps array  
+        print(f"the route is: {self.route_of_links}")
         last_link = self.route_of_links[-1]
+        print(f"the chosen spectrum is: {self.rps[last_link][0]}")
+        
         for link in self.route_of_links:
             self.link_grid[link] = np.bitwise_or(self.link_grid[link],self.rps[last_link][0])
     
@@ -217,6 +260,7 @@ class GameView(arcade.View):
         self.link_grid = OrderedDict()
         for edge in self.edges: #populate link grid
             self.link_grid[edge] = np.zeros(SPECTRUM_SLOTS, dtype= int)
+        print("----------------------new gamee------------------------------")
         print("This is the link grid")
         print(self.edges)
         self.new_round()
@@ -229,6 +273,8 @@ class GameView(arcade.View):
         self.slots = np.random.randint(2,5) 
         self.target = np.random.randint(2,7)
         self.source = np.random.randint(1,self.target)
+        print("----------------------------------------new round -----------------------------------------")
+        print(f"this is the request: (sorce: {self.source},destination: {self.target}, scpectrum slots: {self.slots})")
         self.current_node = self.source
         self.next_node = self.source
         self.constructed_path = [self.source]
@@ -242,8 +288,7 @@ class GameView(arcade.View):
         self.update_spec_grid() 
         self.nodes_availability = {key: [] for key in self.nodes}
         self.update_node_availability()
-        print(f"this is the request: (sorce: {self.source},destination: {self.target}, scpectrum slots: {self.slots})")
-
+        
 
 def main():
  

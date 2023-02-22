@@ -1,7 +1,7 @@
 from gym import Env
 from gym import spaces
 import numpy as np
-from Games.agent_game2 import ArcadeGame, SCREEN_HEIGHT,SCREEN_WIDTH, COLUMN_COUNT
+from Games.agent_game3 import ArcadeGame, SCREEN_HEIGHT,SCREEN_WIDTH, COLUMN_COUNT
 
 class CustomEnv(Env):
     metadata = {'render.modes': ['human', 'rgb_array']}
@@ -41,7 +41,8 @@ class CustomEnv(Env):
             self.game.position = 5 # teleport to slot
             self.game.update_spec_grid()
             reward, done = self.game.check_solution(self.game.position + 1)
-            
+        
+        # self.render(mode='human')
         observation = self.game.draw_screen()
 
         return observation, reward, done, info
