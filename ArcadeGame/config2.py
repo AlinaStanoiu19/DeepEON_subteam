@@ -18,7 +18,7 @@ temp_configs = {
     "left_reward": 0,
     "right_reward": 0,
     "seed": 0,
-    "total_timesteps": 200000,
+    "total_timesteps": 500000,
     "buffer_size": 10000,
     "batch_size": 256,
     "exploration_final_eps": 0.05,
