@@ -24,15 +24,15 @@ def setup_parser():
 
 
 model_config = {
-  "buffer_size":10000, 
-  "batch_size":32,
-  "exploration_final_eps":0.1,
-  "exploration_fraction":0.5,
-  "gamma":0.999,
-  "learning_rate":0.00025,
-  "learning_starts":50000,
-  "target_update_interval":10000,
-  "train_freq":4,
+  "buffer_size": 10000,
+  "batch_size": 256,
+  "exploration_final_eps": 0.05,
+  "exploration_fraction": 0,
+  "gamma": 0.995,
+  "learning_rate": 0.001,
+  "learning_starts": 50000,
+  "target_update_interval": 5000,
+  "train_freq": 256,
   "total_timesteps":500000
 }
 
