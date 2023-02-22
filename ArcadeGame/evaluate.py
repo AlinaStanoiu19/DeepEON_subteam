@@ -60,10 +60,10 @@ game_config = {
 env = CustomEnv(game_config)
 env.seed(0)
 kwargs = {"policy_kwargs":{"replay_buffer_kwargs":True}}
-model = DQN.load("Models/elated-feather-14/model",kwargs=kwargs)
+model = DQN.load("Models/curious-hill-22/model",kwargs=kwargs)
 print("Loaded")
 model.set_env(env)
 episode_rewards, episode_lengths = evaluate(model,env,n_episodes,render=False)
 index = np.arange(0,n_episodes)
 df = pd.DataFrame({"index":index,"Episode Rewards":np.array(episode_rewards), "Episode Lengths": np.array(episode_lengths)})
-df.to_json("Evaluation_data/evaluation_elated-feather-14.json")
+df.to_json("Evaluation_data/curious-hill-22.json")
