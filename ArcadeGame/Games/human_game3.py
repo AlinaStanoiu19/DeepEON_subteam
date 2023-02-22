@@ -191,6 +191,7 @@ class GameView(arcade.View):
                 else:
                     return False
             else: 
+                print(f"we are checking the link: {link}")
                 if (self.check_with_link_grid(link) and self.check_with_history(link)):
                     return True
                 else: 
@@ -213,23 +214,30 @@ class GameView(arcade.View):
 
     def check_with_history(self,link):
 
-        unavailable_options = []
+        available_options = []
+        print(f"this is the history: {self.route_of_links}")
         for option_index in range(len(self.rps[link])):
             option_available = 0
             for previous_link in self.route_of_links:
-                if self.rps[link][option_index] in self.rps[previous_link]:
+                print(f"previous link rps: {self.rps[previous_link]}")
+                print(f"wtf we compare with previous: {self.rps[link][option_index]}")
+                if self.rps[link][option_index] in self.rps[previous_link]: # this does not work 
                     option_available +=1 
-            if not(option_available == len(self.route_of_links)):  #this might not make sense 
-                unavailable_options.append(option_index)
+            print(f"options available: {option_available} and length: {len(self.route_of_links)}")
+            if (option_available == len(self.route_of_links)):  #this might not make sense 
+                available_options.append(option_index)
+                print(f"option index: {option_index}")
         
-
+        total_options = [x for x in range(len(self.rps[link]))]
+        unavailable_options = []
+        for option in total_options:
+            if option not in available_options:
+                unavailable_options.append(option) 
+        print(f"unavailable option: {unavailable_options}")
         self.rps[link] = np.delete(self.rps[link],unavailable_options,axis=0)
         print(f"this is the rsp after checking with history: {self.rps[link]} and the size: {len(self.rps[link])}")
         
-        if(self.rps[link].size == 0):
-            return False
-        else: 
-            return True
+        return (self.rps[link].size != 0)
 
 
     def update_link_grid(self): 
@@ -269,10 +277,12 @@ class GameView(arcade.View):
         """
         Sets up all parameters for a new round, one roud = one request 
         """
-        self.position = 0 
         self.slots = np.random.randint(2,5) 
-        self.target = np.random.randint(2,7)
-        self.source = np.random.randint(1,self.target)
+        self.target = np.random.randint(1,7)
+        self.source = np.random.randint(1,7)
+        while self.target == self.source:
+            self.source = np.random.randint(1,7)
+        self.position = self.source -1
         print("----------------------------------------new round -----------------------------------------")
         print(f"this is the request: (sorce: {self.source},destination: {self.target}, scpectrum slots: {self.slots})")
         self.current_node = self.source
@@ -291,7 +301,7 @@ class GameView(arcade.View):
         
 
 def main():
- 
+    np.random.seed(42)
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT) 
     start_view=GameView() 
     window.show_view(start_view)  
