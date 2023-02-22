@@ -9,8 +9,8 @@ from typing import OrderedDict
 from config import all_configs
 
 SPECTRUM_SLOTS = all_configs["number_of_slots"]
-SCREEN_WIDTH = 920
-SCREEN_HEIGHT = 150
+SCREEN_WIDTH = 400
+SCREEN_HEIGHT = 200
 COLUMN_COUNT = 6
 WIDTH = 20
 HEIGHT = 20
@@ -18,7 +18,7 @@ WHITE = all_configs["white"]
 BLACK = all_configs["black"]
 GREEN = all_configs["green"]
 RED = all_configs["red"]
-
+COLORS = [	(161, 202, 241), (114, 160, 193),(80, 114, 167),(0, 0, 255), 	(6, 42, 120),	(112, 41, 99),  (148, 87, 235),	(212, 115, 212)]
 class ArcadeGame:
 
     def __init__(self):
@@ -72,8 +72,6 @@ class ArcadeGame:
             # prints out target node layer (top row)
             if node == self.target:
                 self.draw_box(node,2,GREEN)
-            else:
-                self.draw_box(node,2,RED)
             
             # prints out the next available nodes (mid row)
             if node in self.nodes_availability[self.current_node]:
@@ -87,16 +85,28 @@ class ArcadeGame:
                 self.draw_box(column+1,4,GREEN)
 
 
-        row = 3
+        row = len(self.edges)
         column = COLUMN_COUNT + 2
+        i = 0
         # network represemtation 
         for edge in self.edges:
+            edge_color = COLORS[i]
             for slot in range(len(self.link_grid[edge])):
-                if self.link_grid[edge][slot] == 0:
-                    self.draw_box(column  + slot, row , WHITE)
-                else:
+                if edge in self.route_of_links:
+                    if (self.rps[edge][0][slot] == 1) :
+                        self.draw_box(column  + slot, row , GREEN)
+                    elif (self.link_grid[edge][slot] == 1): 
+                        self.draw_box(column  + slot, row , BLACK)
+                    else:
+                        self.draw_box(column  + slot, row , edge_color)
+        
+                elif (self.link_grid[edge][slot] == 1):
                     self.draw_box(column  + slot, row , BLACK)
-            row = row + 1 
+                else:
+                    self.draw_box(column  + slot, row , edge_color)
+                    
+            row = row - 1 
+            i = i+1
 
         self.surfarr = pygame.surfarray.array3d(self.background)
         return self.surfarr
