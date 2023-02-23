@@ -220,9 +220,11 @@ class GameView(arcade.View):
             option_available = 0
             for previous_link in self.route_of_links:
                 print(f"previous link rps: {self.rps[previous_link]}")
-                print(f"wtf we compare with previous: {self.rps[link][option_index]}")
-                if self.rps[link][option_index] in self.rps[previous_link]: # this does not work 
-                    option_available +=1 
+                for op in self.rps[previous_link]:
+                    print(f"OPTION: {op}")
+                    print(f"we compare with previous: {self.rps[link][option_index]}")
+                    if all(op == self.rps[link][option_index]):
+                        option_available +=1
             print(f"options available: {option_available} and length: {len(self.route_of_links)}")
             if (option_available == len(self.route_of_links)):  #this might not make sense 
                 available_options.append(option_index)
@@ -310,3 +312,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
