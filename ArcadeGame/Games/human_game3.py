@@ -51,15 +51,15 @@ class GameView(arcade.View):
         row = 2
         column = COLUMN_COUNT + 2
         i = 0
-        # network represemtation 
-        
+
+        # visualising network state 
         for edge in self.edges:
             edge_color = COLORS[i]
             self.text_box(column , row,2 , arcade.color.CANDY_APPLE_RED, str(edge))
 
             for slot in range(len(self.link_grid[edge])):
                 if edge in self.route_of_links:
-                    if (self.rps[edge][0][slot] == 1) :
+                    if (self.rps[self.route_of_links[-1]][0][slot] == 1) :
                         self.text_box(column + 2 + slot, row,1 , arcade.color.GREEN)
                     elif (self.link_grid[edge][slot] == 1): 
                         self.text_box(column + 2 + slot, row,1 , arcade.color.BLACK)
@@ -96,9 +96,9 @@ class GameView(arcade.View):
             return (node1, node2)
         elif ((node2,node1) in self.link_grid.keys()):   
             return (node2, node1)
-        else: 
+        # else: 
             # print("there is no link between these two nodes")
-            return
+            # return
 
 
     def enter(self):
@@ -112,16 +112,18 @@ class GameView(arcade.View):
                 self.score += 720/len(self.constructed_path)
                 self.update_link_grid()
                 print(f"this is the updated link grid: {self.link_grid}")
-                print("---------------------------------------------------------")
+                print("------------------------------------------------------------------------------------------")
                 self.new_round()
             else: 
                 print("Let's select the next node of the path, we are not there yet")
         else: 
             self.blocks += 1
             if (self.blocks > 3):
-                print("Game has ended")
-                print("---------------------------------------------------------------")
+                print("GAME OVER")
+                print("------------------------------------------------------------------------------------------")
                 self.new_game()
+            else:
+                self.new_round()
 
     def on_key_press(self, key, modifiers):
         print(f"route of links so far: {self.route_of_links}")
@@ -186,16 +188,10 @@ class GameView(arcade.View):
         if not(self.rps[link].size == 0):  # the link is not completely full
             if (self.current_node == self.source):  # we are at the first link in the path
                 print(f"we are checking the link: {link}")
-                if (self.check_with_link_grid(link)):
-                    return True
-                else:
-                    return False
+                return (self.check_with_link_grid(link))
             else: 
                 print(f"we are checking the link: {link}")
-                if (self.check_with_link_grid(link) and self.check_with_history(link)):
-                    return True
-                else: 
-                    return False
+                return (self.check_with_link_grid(link) and self.check_with_history(link))
         else: 
             return False
 
@@ -205,12 +201,8 @@ class GameView(arcade.View):
             if not all(item == 0 for item in np.bitwise_and(self.rps[link][option_index],self.link_grid[link])):
                 unavailable_options.append(option_index)
         self.rps[link] = np.delete(self.rps[link],unavailable_options,axis=0)
-        print(f"this is the rsp after checking with link grid: {self.rps[link]} and the size: {len(self.rps[link])}")
-        if(self.rps[link].size == 0):
-            return False
-        else: 
-            return True
-
+        print(f"this is the rps after checking with link grid: {self.rps[link]} and the size: {len(self.rps[link])}")
+        return self.rps[link].size != 0
 
     def check_with_history(self,link):
 
@@ -237,16 +229,16 @@ class GameView(arcade.View):
                 unavailable_options.append(option) 
         print(f"unavailable option: {unavailable_options}")
         self.rps[link] = np.delete(self.rps[link],unavailable_options,axis=0)
-        print(f"this is the rsp after checking with history: {self.rps[link]} and the size: {len(self.rps[link])}")
+        print(f"this is the rps after checking with history: {self.rps[link]} and the size: {len(self.rps[link])}")
         
         return (self.rps[link].size != 0)
 
 
     def update_link_grid(self): 
         # update the link grid with the first fit, so the first option available in the rps array  
-        print(f"the route is: {self.route_of_links}")
+        print(f"The route is: {self.route_of_links}")
         last_link = self.route_of_links[-1]
-        print(f"the chosen spectrum is: {self.rps[last_link][0]}")
+        print(f"The chosen spectrum is: {self.rps[last_link][0]}")
         
         for link in self.route_of_links:
             self.link_grid[link] = np.bitwise_or(self.link_grid[link],self.rps[last_link][0])
@@ -256,7 +248,7 @@ class GameView(arcade.View):
     def update_spec_grid(self):
         self.spec_grid = np.zeros(COLUMN_COUNT, dtype= int)
         self.spec_grid[self.position] = 1
-        print("this is spec grid..")
+        print("Spec grid:")
         print(self.spec_grid)
 
     
@@ -270,8 +262,8 @@ class GameView(arcade.View):
         self.link_grid = OrderedDict()
         for edge in self.edges: #populate link grid
             self.link_grid[edge] = np.zeros(SPECTRUM_SLOTS, dtype= int)
-        print("----------------------new gamee------------------------------")
-        print("This is the link grid")
+        print("\n----------------------------------------NEW GAMEE-----------------------------------------\n")
+        print("Link grid:")
         print(self.edges)
         self.new_round()
                         
@@ -285,7 +277,7 @@ class GameView(arcade.View):
         while self.target == self.source:
             self.source = np.random.randint(1,7)
         self.position = self.source -1
-        print("----------------------------------------new round -----------------------------------------")
+        print("\n----------------------------------------NEW ROUND-----------------------------------------\n")
         print(f"this is the request: (sorce: {self.source},destination: {self.target}, scpectrum slots: {self.slots})")
         self.current_node = self.source
         self.next_node = self.source
@@ -303,7 +295,7 @@ class GameView(arcade.View):
         
 
 def main():
-    np.random.seed(42)
+    # np.random.seed(42)
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT) 
     start_view=GameView() 
     window.show_view(start_view)  
