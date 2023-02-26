@@ -10,6 +10,7 @@ import pathlib
 from config2 import current_dir, full_name, model_config
 from envs.custom_env2 import CustomEnv as CustomEnv2
 from envs.custom_env3 import CustomEnv as CustomEnv3
+from envs.custom_env4 import CustomEnv as CustomEnv4
 
 
 parse = False
@@ -35,6 +36,8 @@ if model_config["env"] == 2:
     env = CustomEnv2()
 elif model_config["env"] == 3:
     env = CustomEnv3()
+elif model_config["env"] == 4:
+    env = CustomEnv4()
 else:
     print("env not selected correctly in config.py")
     exit(1)
