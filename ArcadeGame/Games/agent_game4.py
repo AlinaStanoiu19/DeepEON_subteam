@@ -212,11 +212,11 @@ class ArcadeGame:
         for option_index in range(len(self.rps[link])):
             option_available = 0
             for previous_link in self.route_of_links:
-                if self.rps[link][option_index] in self.rps[previous_link]:
-                    option_available +=1 
-            if not(option_available == len(self.route_of_links)):
+                for op in self.rps[previous_link]:
+                    if all(op == self.rps[link][option_index]):
+                        option_available +=1
+            if (option_available != len(self.route_of_links)):
                 unavailable_options.append(option_index)
-        
 
         self.rps[link] = np.delete(self.rps[link],unavailable_options,axis=0)
         return (self.rps[link].size != 0)

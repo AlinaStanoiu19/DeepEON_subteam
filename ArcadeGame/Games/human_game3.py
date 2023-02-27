@@ -206,31 +206,17 @@ class GameView(arcade.View):
 
     def check_with_history(self,link):
 
-        available_options = []
-        print(f"this is the history: {self.route_of_links}")
+        unavailable_options = []
         for option_index in range(len(self.rps[link])):
             option_available = 0
             for previous_link in self.route_of_links:
-                print(f"previous link rps: {self.rps[previous_link]}")
                 for op in self.rps[previous_link]:
-                    print(f"OPTION: {op}")
-                    print(f"we compare with previous: {self.rps[link][option_index]}")
                     if all(op == self.rps[link][option_index]):
                         option_available +=1
-            print(f"options available: {option_available} and length: {len(self.route_of_links)}")
-            if (option_available == len(self.route_of_links)):  #this might not make sense 
-                available_options.append(option_index)
-                print(f"option index: {option_index}")
-        
-        total_options = [x for x in range(len(self.rps[link]))]
-        unavailable_options = []
-        for option in total_options:
-            if option not in available_options:
-                unavailable_options.append(option) 
-        print(f"unavailable option: {unavailable_options}")
+            if (option_available != len(self.route_of_links)):
+                unavailable_options.append(option_index)
+
         self.rps[link] = np.delete(self.rps[link],unavailable_options,axis=0)
-        print(f"this is the rps after checking with history: {self.rps[link]} and the size: {len(self.rps[link])}")
-        
         return (self.rps[link].size != 0)
 
 
