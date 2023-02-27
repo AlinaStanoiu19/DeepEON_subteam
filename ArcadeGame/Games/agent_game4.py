@@ -150,8 +150,8 @@ class ArcadeGame:
             if (self.blocks > 3):
                 # print("Game has ended")
                 done = True
-            else:
-                self.new_round()
+            # else:
+            #     self.new_round()
 
         return reward, done
 
