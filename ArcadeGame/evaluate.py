@@ -9,6 +9,7 @@ import pandas as pd
 from config2 import current_dir, all_configs, full_name, model_config
 from envs.custom_env2 import CustomEnv as CustomEnv2
 from envs.custom_env3 import CustomEnv as CustomEnv3
+from envs.custom_env4 import CustomEnv as CustomEnv4
 import os
 
 NUMBER_OF_EPISODES_EVALUATED = all_configs["number_of_episodes_evaluated"]
@@ -54,6 +55,8 @@ if all_configs["env"] == 2:
     env = CustomEnv2()
 elif all_configs["env"] == 3:
     env = CustomEnv3()
+elif all_configs["env"] == 4:
+    env = CustomEnv4()
 else:
     print("env not selected correctly in config.py")
     exit(1)
