@@ -18,7 +18,7 @@ WHITE = all_configs["white"]
 BLACK = all_configs["black"]
 GREEN = all_configs["green"]
 RED = all_configs["red"]
-COLORS = [	(161, 202, 241), (114, 160, 193),(80, 114, 167),(0, 0, 255), 	(6, 42, 120),	(112, 41, 99),  (148, 87, 235),	(212, 115, 212)]
+
 class ArcadeGame:
 
     def __init__(self):
@@ -83,30 +83,6 @@ class ArcadeGame:
         for column in range(COLUMN_COUNT):
             if self.spec_grid[column] != 0:
                 self.draw_box(column+1,4,GREEN)
-
-
-        row = len(self.edges)
-        column = COLUMN_COUNT + 2
-        i = 0
-        # network represemtation 
-        for edge in self.edges:
-            edge_color = COLORS[i]
-            for slot in range(len(self.link_grid[edge])):
-                if edge in self.route_of_links:
-                    if (self.rps[edge][0][slot] == 1) :
-                        self.draw_box(column  + slot, row , GREEN)
-                    elif (self.link_grid[edge][slot] == 1): 
-                        self.draw_box(column  + slot, row , BLACK)
-                    else:
-                        self.draw_box(column  + slot, row , edge_color)
-        
-                elif (self.link_grid[edge][slot] == 1):
-                    self.draw_box(column  + slot, row , BLACK)
-                else:
-                    self.draw_box(column  + slot, row , edge_color)
-                    
-            row = row - 1 
-            i = i+1
 
         self.surfarr = pygame.surfarray.array3d(self.background)
         return self.surfarr
@@ -256,4 +232,3 @@ class ArcadeGame:
     def exit(self):
         pygame.quit()
         sys.exit()
-
