@@ -7,7 +7,7 @@ import argparse
 from datetime import datetime
 import os
 import pathlib
-from config2 import current_dir, full_name, model_config
+from config import current_dir, full_name, model_config
 from envs.custom_env2 import CustomEnv as CustomEnv2
 from envs.custom_env3 import CustomEnv as CustomEnv3
 from envs.custom_env4 import CustomEnv as CustomEnv4
