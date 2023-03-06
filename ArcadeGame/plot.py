@@ -81,12 +81,12 @@ for i, er in enumerate(df2["Episode Rewards"]):
 #         a = 0
 
 ax.plot(new_eps, avg_df1, label="Heuristics", linewidth=0.5, color="red")
-ax.plot(new_eps, avg_df2, label="DeepEON Arrows", linewidth=0.5, color="deepskyblue")
-#ax.plot(new_eps, avg_df3, label="DeepEON SL", linewidth=0.5, color="navy")
+ax.plot(new_eps, avg_df2, label="DeepEON Game 3", linewidth=0.5, color="navy")
+#ax.plot(new_eps, avg_df3, label="DeepEON SL", linewidth=0.5, color="deepskyblue")
 
 ax.plot(new_eps, np.full((y_avg,), mean_reward1), linewidth=2, color="red")
-ax.plot(new_eps, np.full((y_avg,), mean_reward2), linewidth=2, color="deepskyblue")
-#ax.plot(new_eps, np.full((y_avg,), mean_reward3), linewidth=2, color="navy")
+ax.plot(new_eps, np.full((y_avg,), mean_reward2), linewidth=2, color="navy")
+#ax.plot(new_eps, np.full((y_avg,), mean_reward3), linewidth=2, color="deepskyblue")
 
 plt.legend()
 
