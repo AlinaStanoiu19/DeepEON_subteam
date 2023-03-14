@@ -25,15 +25,14 @@ class ArcadeGame:
     def __init__(self):
         self.window = (SCREEN_WIDTH,SCREEN_HEIGHT)
         self.background = pygame.Surface(self.window)
-        self.highscore = 0
         self.edges = [(1,2),(2,3),(1,4),(3,5),(2,5),(4,5),(3,6),(4,6)]
         self.nodes = [1,2,3,4,5,6]
         self.G = nx.Graph()
         self.G.add_edges_from(self.edges)
         self.seed()
+        self.request_id = 0
     
     def new_game(self):
-        self.score = 0
         self.blocks = 0
         self.link_grid = OrderedDict()
         for edge in self.edges: #populate link grid
@@ -48,7 +47,6 @@ class ArcadeGame:
         self.slots = np.random.randint(2,5) 
         self.target, self.source = random.sample(range(1,7), 2)
         print(f"Target: {self.target} | Source: {self.source} | Slots: {self.slots}")
-
         self.position = self.source-1
         self.current_node = self.source
         self.next_node = self.source
@@ -65,6 +63,8 @@ class ArcadeGame:
         self.update_spec_grid() 
         self.nodes_availability = {key: [] for key in self.nodes}
         self.update_node_availability()
+
+        self.request_id += 1
 
     def draw_screen(self):
         self.background.fill(RED)
@@ -137,7 +137,6 @@ class ArcadeGame:
                 # print("You  have reached the destination")
                 reward = all_configs["solution_reward"]
                 print(f"!!! Target reached ({reward})")
-                self.score += 720/len(self.constructed_path)
                 self.update_link_grid()
                 # print(f"this is the updated link grid: {self.link_grid}")
                 self.new_round()
@@ -146,14 +145,16 @@ class ArcadeGame:
             self.blocks += 1
             reward = all_configs["rejection_reward"]
             print(f"! Rejection ({reward})")
-            self.score += all_configs["rejection_reward"]
             if (self.blocks > 3):
                 # print("Game has ended")
                 done = True
             # else:
             #     self.new_round()
-
-        return reward, done
+        request_info = {'id': self.request_id, 'source': self.source, 'target': self.target, 
+                   'slots': self.slots, 'constructed_path':self.constructed_path,
+                     'route_of_links':self.route_of_links}
+        
+        return reward, done, request_info
 
     def move_to_node(self):
         # add the node to the self.constructed_path
@@ -238,8 +239,7 @@ class ArcadeGame:
         self.screen = pygame.display.set_mode(self.window)
         self.screen.blit(self.background,(0,0))
         pygame.display.flip()
-        # print(f"Number of blocks: {self.blocks} Score: {self.score} High Score: {self.highscore}")
-
+        
     def seed(self):
         np.random.seed(all_configs["seed"])
 
