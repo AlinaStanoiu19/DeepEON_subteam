@@ -5,7 +5,7 @@ import numpy as np
 
 df1 = pd.read_json("Evaluations/heuristic_evaluation_8_24_5_10_-10_-15_0_3_2_16_8_1000.json")      # heuristics
 df2 = pd.read_json("Evaluations/agent_evaluation_8_24_5_10_-10_-15_0_3_2_16_8_1000.json")   # DQL arrows
-df3 = pd.read_json("Evaluation_data/agent_evaluation_8_24_5_10_-10_-15_0_4_2_16_8_1000.json")      # DQL slot selection
+df3 = pd.read_json("Evaluations/agent_evaluation_8_24_5_10_-10_-15_0_4_2_16_8_1000.json")      # DQL slot selection
 
 print("Heuristics performance")
 mean_reward1 = np.mean(df1["Episode Rewards"])
