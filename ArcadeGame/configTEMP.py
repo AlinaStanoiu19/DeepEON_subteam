@@ -4,7 +4,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 
 
 temp_configs = {
-    "env": 3,
+    "env": 4,
     "episode_end": 2,
     "end_limit":16,
     "number_of_slots": 8,

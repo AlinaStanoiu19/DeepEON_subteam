@@ -6,7 +6,7 @@ import gym
 from typing import Optional
 import matplotlib.pyplot as plt
 import pandas as pd
-from config import current_dir, all_configs, full_name, model_config
+from configTEMP import current_dir, all_configs, full_name, model_config
 from envs.custom_env2 import CustomEnv as CustomEnv2
 from envs.custom_env3 import CustomEnv as CustomEnv3
 from envs.custom_env4 import CustomEnv as CustomEnv4
@@ -109,7 +109,6 @@ perf_df.to_json(
 # data & analytics dataframe and export to json
 da_df = pd.DataFrame(
     {
-        "index": index,
         "Episode IDs": np.array(episode_ids),
         "Action IDs": np.array(action_ids),
         "Request Info": np.array(request_info),
@@ -117,7 +116,7 @@ da_df = pd.DataFrame(
         "Action Rewards": np.array(action_rewards),
     }
 )
-perf_df.to_json(
+da_df.to_json(
     os.path.join(
         current_dir,
         "Analytics",
