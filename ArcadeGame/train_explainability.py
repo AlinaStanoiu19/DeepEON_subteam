@@ -17,6 +17,7 @@ game_config = {
   "seed": 0
 }
 
+
 # # implement custom callback function
 class ExplainabilityCallback(BaseCallback):
     """
@@ -30,10 +31,6 @@ class ExplainabilityCallback(BaseCallback):
         self.verbose = verbose
         self.env = env 
         self.model = DQN(CnnPolicy, env,  verbose=1, buffer_size = 5000)
-        
-
-    def _init_callback(self) -> None: 
-        pass
 
     def _on_step(self) -> bool:
         """
@@ -50,7 +47,7 @@ class ExplainabilityCallback(BaseCallback):
         
         # Open CSV file in append mode
         # Create a file object for this file
-        with open(log_dir+'callback_data.csv', 'a') as f_object:
+        with open(log_dir+'callback_data.csv', 'a', newline='') as f_object:
             dictwriter_object = DictWriter(f_object, fieldnames=columns)
             dictwriter_object.writerow(new_data)
             f_object.close()
@@ -62,7 +59,7 @@ log_dir = "tmp/"
 os.makedirs(log_dir, exist_ok=True)
 columns = ['episode_id', 'request_id', 'action_id', 'request', 'action', 'reward']
 df = pd.DataFrame(columns=columns)
-df.to_csv(log_dir+'callback_data.csv')
+df.to_csv(log_dir+'callback_data.csv', index=False)
 
 # create and wrap(monitor) the environment
 info_keywords  = ("request_info","action_info")
