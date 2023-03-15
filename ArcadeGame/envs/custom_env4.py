@@ -18,8 +18,6 @@ class CustomEnv(Env):
         self.action_id = 0
         self.action_info = {}
         self.request_info = {}
-
-        
     
     def step(self, action):
         reward, done, info = 0, False, {} 

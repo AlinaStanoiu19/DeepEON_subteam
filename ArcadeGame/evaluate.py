@@ -1,12 +1,13 @@
 from stable_baselines3.common import base_class
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.dqn.dqn import DQN
+from stable_baselines3.common.monitor import Monitor
 import numpy as np
 import gym
 from typing import Optional
 import matplotlib.pyplot as plt
 import pandas as pd
-from config import current_dir, all_configs, full_name, model_config
+from configTEMP import current_dir, all_configs, full_name, model_config
 from envs.custom_env2 import CustomEnv as CustomEnv2
 from envs.custom_env3 import CustomEnv as CustomEnv3
 from envs.custom_env4 import CustomEnv as CustomEnv4
@@ -50,6 +51,11 @@ def evaluate(
 
     return episode_rewards, episode_lengths
 
+# create and wrap(monitor) the environment
+info_keywords  = ("request_info","action_info")
+
+log_dir = "tmp_ev/"
+os.makedirs(log_dir, exist_ok=True)
 
 if all_configs["env"] == 2:
     env = CustomEnv2()
@@ -61,8 +67,9 @@ else:
     print("env not selected correctly in config.py")
     exit(1)
 
-
+env = Monitor(env, log_dir, info_keywords = info_keywords )
 env.seed(all_configs["seed"])
+
 model = DQN.load(os.path.join(current_dir, "Models", full_name, "model"))
 print("Loaded")
 model.set_env(env)

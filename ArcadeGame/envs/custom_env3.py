@@ -6,6 +6,7 @@ from Games.agent_game3 import ArcadeGame, SCREEN_HEIGHT,SCREEN_WIDTH, COLUMN_COU
 class CustomEnv(Env):
     metadata = {'render.modes': ['human', 'rgb_array']}
     num_envs = 1
+
     def __init__(self):
         # self.config = config 
         self.game = ArcadeGame()
@@ -13,42 +14,31 @@ class CustomEnv(Env):
         self.observation_space = spaces.Box(
             shape= (SCREEN_WIDTH, SCREEN_HEIGHT, 3),low=0,high=255,dtype=np.uint8
         )
+        self.episode_id = 0
+        self.action_id = 0
+        self.action_info = {}
+        self.request_info = {}
     
     def step(self, action):
         reward, done, info = 0, False, {} 
         print(f"Action: {action}")
-        if action == 0: 
-            self.game.position = 0 # teleport to slot
-            self.game.update_spec_grid()
-            reward, done = self.game.check_solution(self.game.position + 1)
-        elif action == 1: 
-            self.game.position = 1 # teleport to slot
-            self.game.update_spec_grid()
-            reward, done = self.game.check_solution(self.game.position + 1)
-        elif action == 2: 
-            self.game.position = 2 # teleport to slot
-            self.game.update_spec_grid()
-            reward, done = self.game.check_solution(self.game.position + 1)
-        elif action == 3: 
-            self.game.position = 3 # teleport to slot
-            self.game.update_spec_grid()
-            reward, done = self.game.check_solution(self.game.position + 1)
-        elif action == 4: 
-            self.game.position = 4 # teleport to slot
-            self.game.update_spec_grid()
-            reward, done = self.game.check_solution(self.game.position + 1)
-        elif action == 5: 
-            self.game.position = 5 # teleport to slot
-            self.game.update_spec_grid()
-            reward, done = self.game.check_solution(self.game.position + 1)
         
+        self.game.position = action # teleport to slot
+        self.game.update_spec_grid()
+        reward, done, self.request_info = self.game.check_solution(self.game.position + 1)
+        self.action_info = {'action_id': self.action_id, 'action': action, 'reward': reward}
+
         # self.render(mode='human')
         observation = self.game.draw_screen()
-
+        self.action_id += 1
+        
+        # info for the monitor function
+        info = {"request_info": self.request_info, "action_info": self.action_info}
         return observation, reward, done, info
 
     def reset(self):
         self.game.new_game()
+        self.episode_id += 1
         observation = self.game.draw_screen()
         return observation 
 

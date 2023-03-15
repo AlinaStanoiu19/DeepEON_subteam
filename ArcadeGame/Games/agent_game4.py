@@ -20,7 +20,6 @@ GREEN = all_configs["green"]
 RED = all_configs["red"]
 COLORS = [	(161, 202, 241), (114, 160, 193),(80, 114, 167),(0, 0, 255), 	(6, 42, 120),	(112, 41, 99),  (148, 87, 235),	(212, 115, 212)]
 
-
 class ArcadeGame:
     def __init__(self):
         self.window = (SCREEN_WIDTH,SCREEN_HEIGHT)
@@ -37,8 +36,6 @@ class ArcadeGame:
         self.link_grid = OrderedDict()
         for edge in self.edges: #populate link grid
             self.link_grid[edge] = np.zeros(SPECTRUM_SLOTS, dtype= int)
-        # print("This is the link grid")
-        # print(self.edges)
         self.new_round()
 
     def new_round(self):
@@ -88,10 +85,8 @@ class ArcadeGame:
 
         row = len(self.edges)
         column = COLUMN_COUNT + 2
-        i = 0
         # network representation 
         for edge in self.edges:
-            edge_color = COLORS[i]
             for slot in range(len(self.link_grid[edge])):
                 if edge in self.route_of_links:
                     if (self.rps[self.route_of_links[-1]][0][slot] == 1) :
@@ -99,15 +94,14 @@ class ArcadeGame:
                     elif (self.link_grid[edge][slot] == 1): 
                         self.draw_box(column  + slot, row , BLACK)
                     else:
-                        self.draw_box(column  + slot, row , edge_color)
+                        self.draw_box(column  + slot, row , WHITE)
         
                 elif (self.link_grid[edge][slot] == 1):
                     self.draw_box(column  + slot, row , BLACK)
                 else:
-                    self.draw_box(column  + slot, row , edge_color)
+                    self.draw_box(column  + slot, row , WHITE)
                     
             row = row - 1 
-            i = i+1
 
         self.surfarr = pygame.surfarray.array3d(self.background)
         return self.surfarr
@@ -228,7 +222,6 @@ class ArcadeGame:
         last_link = self.route_of_links[-1]
         for link in self.route_of_links:
             self.link_grid[link] = np.bitwise_or(self.link_grid[link],self.rps[last_link][0])
-    
     
     def update_spec_grid(self):
         self.spec_grid = np.zeros(COLUMN_COUNT, dtype= int)

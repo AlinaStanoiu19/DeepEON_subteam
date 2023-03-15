@@ -20,25 +20,21 @@ GREEN = all_configs["green"]
 RED = all_configs["red"]
 
 class ArcadeGame:
-
     def __init__(self):
         self.window = (SCREEN_WIDTH,SCREEN_HEIGHT)
         self.background = pygame.Surface(self.window)
-        self.highscore = 0
         self.edges = [(1,2),(2,3),(1,4),(3,5),(2,5),(4,5),(3,6),(4,6)]
         self.nodes = [1,2,3,4,5,6]
         self.G = nx.Graph()
         self.G.add_edges_from(self.edges)
         self.seed()
+        self.request_id = 0
     
     def new_game(self):
-        self.score = 0
         self.blocks = 0
         self.link_grid = OrderedDict()
         for edge in self.edges: #populate link grid
             self.link_grid[edge] = np.zeros(SPECTRUM_SLOTS, dtype= int)
-        # print("This is the link grid")
-        # print(self.edges)
         self.new_round()
 
     def new_round(self):
@@ -47,7 +43,6 @@ class ArcadeGame:
         self.slots = np.random.randint(2,5) 
         self.target, self.source = random.sample(range(1,7), 2)
         print(f"Target: {self.target} | Source: {self.source} | Slots: {self.slots}")
-
         self.position = self.source-1
         self.current_node = self.source
         self.next_node = self.source
@@ -64,6 +59,8 @@ class ArcadeGame:
         self.update_spec_grid() 
         self.nodes_availability = {key: [] for key in self.nodes}
         self.update_node_availability()
+
+        self.request_id += 1
 
     def draw_screen(self):
         self.background.fill(RED)
@@ -125,8 +122,11 @@ class ArcadeGame:
             if (self.blocks > 3):
                 # print("Game has ended")
                 done = True
+        request_info = {'id': self.request_id, 'source': self.source, 'target': self.target, 
+                   'slots': self.slots, 'constructed_path':self.constructed_path,
+                     'route_of_links':self.route_of_links}
 
-        return reward, done
+        return reward, done, request_info
 
     def move_to_node(self):
         # add the node to the self.constructed_path
@@ -163,15 +163,9 @@ class ArcadeGame:
         if not(self.rps[link].size == 0):  # the link is not completely full
             if (self.current_node == self.source):  # we are at the first link in the path
                 # print(f"we are checking the link: {link}")
-                if (self.check_with_link_grid(link)):
-                    return True
-                else:
-                    return False
+                return (self.check_with_link_grid(link))
             else: 
-                if (self.check_with_link_grid(link) and self.check_with_history(link)):
-                    return True
-                else: 
-                    return False
+                return (self.check_with_link_grid(link) and self.check_with_history(link))
         else: 
             return False
 
@@ -182,10 +176,7 @@ class ArcadeGame:
                 unavailable_options.append(option_index)
         self.rps[link] = np.delete(self.rps[link],unavailable_options,axis=0)
         # print(f"this is the rsp after checking: {self.rps[link]} and the size: {len(self.rps[link])}")
-        if(self.rps[link].size == 0):
-            return False
-        else: 
-            return True
+        return self.rps[link].size != 0
 
 
     def check_with_history(self,link):
@@ -194,17 +185,15 @@ class ArcadeGame:
         for option_index in range(len(self.rps[link])):
             option_available = 0
             for previous_link in self.route_of_links:
-                if self.rps[link][option_index] in self.rps[previous_link]:
-                    option_available +=1 
-            if not(option_available == len(self.route_of_links)):
+                for op in self.rps[previous_link]:
+                    if all(op == self.rps[link][option_index]):
+                        option_available +=1
+            if (option_available != len(self.route_of_links)):
                 unavailable_options.append(option_index)
-        
 
         self.rps[link] = np.delete(self.rps[link],unavailable_options,axis=0)
-        if(self.rps[link].size == 0):
-            return False
-        else: 
-            return True
+        return (self.rps[link].size != 0)
+
 
 
     def update_link_grid(self): 
@@ -213,8 +202,6 @@ class ArcadeGame:
         for link in self.route_of_links:
             self.link_grid[link] = np.bitwise_or(self.link_grid[link],self.rps[last_link][0])
     
-        
-
     def update_spec_grid(self):
         self.spec_grid = np.zeros(COLUMN_COUNT, dtype= int)
         self.spec_grid[self.position] = 1
