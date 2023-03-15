@@ -18,7 +18,6 @@ WHITE = all_configs["white"]
 BLACK = all_configs["black"]
 GREEN = all_configs["green"]
 RED = all_configs["red"]
-COLORS = [	(161, 202, 241), (114, 160, 193),(80, 114, 167),(0, 0, 255), 	(6, 42, 120),	(112, 41, 99),  (148, 87, 235),	(212, 115, 212)]
 
 class ArcadeGame:
     def __init__(self):

@@ -109,7 +109,6 @@ class ArcadeGame:
                 # print("You  have reached the destination")
                 reward = all_configs["solution_reward"]
                 print(f"!!! Target reached ({reward})")
-                self.score += 720/len(self.constructed_path)
                 self.update_link_grid()
                 # print(f"this is the updated link grid: {self.link_grid}")
                 self.new_round()
@@ -118,7 +117,6 @@ class ArcadeGame:
             self.blocks += 1
             reward = all_configs["rejection_reward"]
             print(f"! Rejection ({reward})")
-            self.score += all_configs["rejection_reward"]
             if (self.blocks > 3):
                 # print("Game has ended")
                 done = True
@@ -211,8 +209,7 @@ class ArcadeGame:
         self.screen = pygame.display.set_mode(self.window)
         self.screen.blit(self.background,(0,0))
         pygame.display.flip()
-        # print(f"Number of blocks: {self.blocks} Score: {self.score} High Score: {self.highscore}")
-
+        
     def seed(self):
         np.random.seed(all_configs["seed"])
 
