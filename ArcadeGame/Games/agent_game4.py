@@ -39,10 +39,11 @@ class ArcadeGame:
 
     def new_round(self):
         print("-   NEW ROUND   -")
+        self.request_id += 1
         first_slot = 0
         self.slots = np.random.randint(2,5) 
         self.target, self.source = random.sample(range(1,7), 2)
-        print(f"Target: {self.target} | Source: {self.source} | Slots: {self.slots}")
+        print(f"ID: {self.request_id}, Target: {self.target} | Source: {self.source} | Slots: {self.slots}")
         self.position = self.source-1
         self.current_node = self.source
         self.next_node = self.source
@@ -60,7 +61,6 @@ class ArcadeGame:
         self.nodes_availability = {key: [] for key in self.nodes}
         self.update_node_availability()
 
-        self.request_id += 1
 
     def draw_screen(self):
         self.background.fill(RED)
@@ -116,6 +116,11 @@ class ArcadeGame:
         # else: 
             # print("there is no link between these two nodes")
             # return
+    
+    def get_request_info(self):
+        return {'id': self.request_id, 'source': self.source, 'target': self.target, 
+                   'slots': self.slots, 'constructed_path':self.constructed_path,
+                     'route_of_links':self.route_of_links}
 
     def check_solution(self, node):
         done = False
@@ -131,22 +136,19 @@ class ArcadeGame:
                 reward = all_configs["solution_reward"]
                 print(f"!!! Target reached ({reward})")
                 self.update_link_grid()
-                # print(f"this is the updated link grid: {self.link_grid}")
+                request_info = self.get_request_info()
                 self.new_round()
+            else: 
+                request_info = self.get_request_info()
 
         else: 
             self.blocks += 1
             reward = all_configs["rejection_reward"]
             print(f"! Rejection ({reward})")
+            request_info = self.get_request_info()
             if (self.blocks > 3):
-                # print("Game has ended")
                 done = True
-            # else:
-            #     self.new_round()
-        request_info = {'id': self.request_id, 'source': self.source, 'target': self.target, 
-                   'slots': self.slots, 'constructed_path':self.constructed_path,
-                     'route_of_links':self.route_of_links}
-        
+
         return reward, done, request_info
 
     def move_to_node(self):

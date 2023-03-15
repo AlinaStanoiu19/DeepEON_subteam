@@ -96,6 +96,11 @@ class ArcadeGame:
             # print("there is no link between these two nodes")
             return
 
+    def get_request_info(self):
+        return {'id': self.request_id, 'source': self.source, 'target': self.target, 
+                   'slots': self.slots, 'constructed_path':self.constructed_path,
+                     'route_of_links':self.route_of_links}
+
     def check_solution(self, node):
         done = False
         self.next_node = node
@@ -110,13 +115,16 @@ class ArcadeGame:
                 reward = all_configs["solution_reward"]
                 print(f"!!! Target reached ({reward})")
                 self.update_link_grid()
-                # print(f"this is the updated link grid: {self.link_grid}")
+                request_info = self.get_request_info()
                 self.new_round()
+            else: 
+                request_info = self.get_request_info()
 
         else: 
             self.blocks += 1
             reward = all_configs["rejection_reward"]
             print(f"! Rejection ({reward})")
+            request_info = self.get_request_info()
             if (self.blocks > 3):
                 # print("Game has ended")
                 done = True
