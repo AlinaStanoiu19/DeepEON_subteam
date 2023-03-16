@@ -31,6 +31,7 @@ class ArcadeGame:
         self.request_id = 0
     
     def new_game(self):
+        print("################ NEW GAME ################")
         self.blocks = 0
         self.link_grid = OrderedDict()
         for edge in self.edges: #populate link grid
