@@ -6,10 +6,14 @@ from envs.custom_env4 import CustomEnv as CustomEnv4
 import cv2
 import os
 from config2 import current_dir, full_name, all_configs
-
+from stable_baselines3.common.monitor import Monitor
 
 SCREEN_HEIGHT = all_configs["height"]
 SCREEN_WIDTH = all_configs["width"]
+
+log_dir = "tmp/"
+os.makedirs(log_dir, exist_ok=True)
+info_keywords  = ("request_info","action_info")
 
 if all_configs["env"] == 2:
     env = CustomEnv2()
@@ -21,7 +25,7 @@ else:
     print("env not selected correctly in config.py")
     exit(1)
 
-
+env = Monitor(env, log_dir, info_keywords = info_keywords )
 def record():
     print("saving..")
     height, width, layers = frame_array[0].shape
