@@ -7,6 +7,7 @@ import networkx as nx
 import sys
 from typing import OrderedDict
 from config import all_configs
+import arcade
 
 SPECTRUM_SLOTS = all_configs["number_of_slots"]
 SCREEN_WIDTH = 400
@@ -80,7 +81,7 @@ class ArcadeGame:
         # prints out current node selection (bot row)
         for column in range(COLUMN_COUNT):
             if self.spec_grid[column] != 0:
-                self.draw_box(column+1,4,GREEN)
+                self.draw_box(column+1,4,arcade.color.ORANGE)
 
 
         row = len(self.edges)
