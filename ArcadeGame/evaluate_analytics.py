@@ -116,6 +116,34 @@ da_df = pd.DataFrame(
         "Action Rewards": np.array(action_rewards),
     }
 )
+
+# Adding path lengths to the dataframe
+counts = da_df[da_df['Action Rewards'] >= 0]['Request Info'].apply(lambda x: x['id']).value_counts(sort=False)
+counts_da_df = pd.DataFrame({'id': counts.index, 'count': counts.values})
+
+da_df['Path length'] = da_df['Request Info'].apply(lambda x: x['id']).map(counts_da_df.set_index('id')['count'])
+da_df['Path length'] = da_df['Path length'].fillna(0) # we filtered negative rewards, unsuccessful requests therefore have NaN values which should be filled with 0
+da_df['Path length'] = da_df['Path length'].astype(int)
+
+# Calculating allocated slots for each episode
+episode_sum = {}
+lastid = -1
+
+for index, row in da_df.iterrows():
+    episode = row['Episode IDs']
+    info = row['Request Info']
+    info_id = info['id']
+    info_slots = info['slots']
+    if info_id>lastid:
+        lastid = info_id
+        if episode not in episode_sum.keys():
+            episode_sum[episode] = info_slots
+        else:
+            episode_sum[episode] += info_slots   
+
+da_df['Utility'] = da_df['Episode IDs'].map(episode_sum)
+
+# Saving dataframe
 da_df.to_json(
     os.path.join(
         current_dir,
