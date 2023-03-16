@@ -6,7 +6,7 @@ import gym
 from typing import Optional
 import matplotlib.pyplot as plt
 import pandas as pd
-from config2 import current_dir, all_configs, full_name, model_config
+from config import current_dir, all_configs, full_name, model_config
 from envs.custom_env2 import CustomEnv as CustomEnv2
 from envs.custom_env3 import CustomEnv as CustomEnv3
 from envs.custom_env4 import CustomEnv as CustomEnv4
