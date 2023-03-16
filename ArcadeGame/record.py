@@ -5,7 +5,7 @@ from envs.custom_env3 import CustomEnv as CustomEnv3
 from envs.custom_env4 import CustomEnv as CustomEnv4
 import cv2
 import os
-from config import current_dir, full_name, all_configs
+from config2 import current_dir, full_name, all_configs
 
 
 SCREEN_HEIGHT = all_configs["height"]
