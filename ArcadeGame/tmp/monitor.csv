@@ -1,12 +1,12 @@
-#{"t_start": 1678976450.041009, "env_id": null}
+#{"t_start": 1678978582.664091, "env_id": null}
 r,l,t,request_info,action_info
-30,14,4.547792,"{'id': 8, 'source': 4, 'target': 2, 'slots': 3, 'constructed_path': [4, 5], 'route_of_links': [(4, 5)]}","{'action_id': 13, 'action': 0, 'reward': -10}"
-0,10,4.582881,"{'id': 13, 'source': 4, 'target': 5, 'slots': 2, 'constructed_path': [4, 1], 'route_of_links': [(1, 4)]}","{'action_id': 23, 'action': 0, 'reward': -10}"
-0,11,4.620626,"{'id': 18, 'source': 1, 'target': 3, 'slots': 3, 'constructed_path': [1], 'route_of_links': []}","{'action_id': 34, 'action': 0, 'reward': -10}"
-50,19,4.685181,"{'id': 28, 'source': 2, 'target': 4, 'slots': 2, 'constructed_path': [2, 1], 'route_of_links': [(1, 2)]}","{'action_id': 53, 'action': 0, 'reward': -10}"
-0,12,4.725967,"{'id': 33, 'source': 4, 'target': 5, 'slots': 4, 'constructed_path': [4, 1], 'route_of_links': [(1, 4)]}","{'action_id': 65, 'action': 0, 'reward': -10}"
-0,8,4.75463,"{'id': 38, 'source': 3, 'target': 6, 'slots': 2, 'constructed_path': [3], 'route_of_links': []}","{'action_id': 73, 'action': 0, 'reward': -10}"
-10,12,4.796806,"{'id': 44, 'source': 5, 'target': 1, 'slots': 2, 'constructed_path': [5], 'route_of_links': []}","{'action_id': 85, 'action': 0, 'reward': -10}"
-0,12,4.838312,"{'id': 49, 'source': 1, 'target': 3, 'slots': 2, 'constructed_path': [1], 'route_of_links': []}","{'action_id': 97, 'action': 0, 'reward': -10}"
-10,12,4.879703,"{'id': 55, 'source': 5, 'target': 2, 'slots': 4, 'constructed_path': [5], 'route_of_links': []}","{'action_id': 109, 'action': 0, 'reward': -10}"
-10,12,4.922286,"{'id': 61, 'source': 4, 'target': 5, 'slots': 3, 'constructed_path': [4, 1], 'route_of_links': [(1, 4)]}","{'action_id': 121, 'action': 0, 'reward': -10}"
+20,14,4.624863,"{'id': 7, 'source': 3, 'target': 4, 'slots': 2, 'constructed_path': [3], 'route_of_links': []}","{'action_id': 13, 'action': 0, 'reward': -10}"
+0,11,4.663925,"{'id': 12, 'source': 4, 'target': 6, 'slots': 4, 'constructed_path': [4, 1], 'route_of_links': [(1, 4)]}","{'action_id': 24, 'action': 0, 'reward': -10}"
+10,11,4.703123,"{'id': 18, 'source': 6, 'target': 2, 'slots': 3, 'constructed_path': [6, 3], 'route_of_links': [(3, 6)]}","{'action_id': 35, 'action': 0, 'reward': -10}"
+20,14,4.752911,"{'id': 25, 'source': 3, 'target': 2, 'slots': 3, 'constructed_path': [3], 'route_of_links': []}","{'action_id': 49, 'action': 0, 'reward': -10}"
+0,10,4.788419,"{'id': 30, 'source': 1, 'target': 6, 'slots': 2, 'constructed_path': [1], 'route_of_links': []}","{'action_id': 59, 'action': 2, 'reward': -10}"
+-20,7,4.813542,"{'id': 33, 'source': 6, 'target': 2, 'slots': 4, 'constructed_path': [6, 3], 'route_of_links': [(3, 6)]}","{'action_id': 66, 'action': 0, 'reward': -10}"
+10,15,4.865621,"{'id': 39, 'source': 4, 'target': 2, 'slots': 2, 'constructed_path': [4, 5], 'route_of_links': [(4, 5)]}","{'action_id': 81, 'action': 0, 'reward': -10}"
+20,13,4.913341,"{'id': 46, 'source': 1, 'target': 5, 'slots': 2, 'constructed_path': [1], 'route_of_links': []}","{'action_id': 94, 'action': 0, 'reward': -10}"
+30,15,4.968157,"{'id': 54, 'source': 3, 'target': 2, 'slots': 4, 'constructed_path': [3, 5], 'route_of_links': [(3, 5)]}","{'action_id': 109, 'action': 0, 'reward': -10}"
+30,16,5.025074,"{'id': 62, 'source': 4, 'target': 6, 'slots': 4, 'constructed_path': [4, 5, 3], 'route_of_links': [(4, 5), (3, 5)]}","{'action_id': 125, 'action': 0, 'reward': -10}"
