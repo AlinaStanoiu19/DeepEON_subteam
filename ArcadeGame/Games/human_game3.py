@@ -64,12 +64,12 @@ class GameView(arcade.View):
                     elif (self.link_grid[edge][slot] == 1): 
                         self.text_box(column + 2 + slot, row,1 , arcade.color.BLACK)
                     else:
-                        self.text_box(column + 2 + slot, row,1 , edge_color)
+                        self.text_box(column + 2 + slot, row,1 , arcade.color.WHITE)
         
                 elif (self.link_grid[edge][slot] == 1):
                     self.text_box(column + 2 + slot, row,1 , arcade.color.BLACK)
                 else:
-                    self.text_box(column + 2 + slot, row,1 , edge_color)
+                    self.text_box(column + 2 + slot, row,1 , arcade.color.WHITE)
                     
             row = row + 1 
             i = i+1

@@ -27,6 +27,7 @@ class ArcadeGame:
         self.G = nx.Graph()
         self.G.add_edges_from(self.edges)
         self.seed()
+        self.request_id = 0
     
     def draw_screen(self):
         self.background.fill(RED)
@@ -68,6 +69,7 @@ class ArcadeGame:
         """
         Sets up all parameters for a new round
         """
+        self.request_id += 1
         self.first_slot = 0
         self.target = np.random.randint(2,7)
         self.source = np.random.randint(1,self.target)
@@ -75,30 +77,55 @@ class ArcadeGame:
         self.paths = list(islice(p,5))
         self.slots = np.random.randint(2,5)
         self.update_spec_grid()#populate spectrum grid
+        self.constructed_path = [self.source]
+        self.route_of_links = []
 
     def update_spec_grid(self):
         self.spec_grid = np.zeros(COLUMN_COUNT*5 + 4, dtype= int)
         for i in range(self.slots):
             self.spec_grid[self.first_slot+i] = 1
 
+    
+    def get_request_info(self):
+        return {'id': self.request_id, 'source': self.source, 'target': self.target, 
+                   'slots': self.slots, 'constructed_path':self.constructed_path,
+                     'route_of_links':self.route_of_links}
+    
+    def link(self, node1, node2 ):
+        if ((node1,node2) in self.link_grid.keys()):
+            return (node1, node2)
+        elif ((node2,node1) in self.link_grid.keys()):   
+            return (node2, node1)
+        # else: 
+            # print("there is no link between these two nodes")
+            # return
+
     def check_solution(self):
         done = False
+        selected_path = self.first_slot//9 # !!check first slot is correct
+        self.constructed_path = self.paths[selected_path]
+        print(f"this is the selected path: {selected_path} and constructed_paths: {self.constructed_path}")
+        for n in range(len(self.constructed_path)-1):
+            self.route_of_links.append(self.link(self.constructed_path[n], self.constructed_path[n+1]))
+        print(f"this is the route of links: {self.route_of_links}")
         if self.is_solution():
             reward = all_configs["solution_reward"]
             self.score += all_configs["solution_reward"]
             self.update_link_grid()
+            request_info = self.get_request_info()
             self.new_round()
             print(f"SOLUTION TRUE {reward}")
         else:
             self.blocks += 1
             reward = all_configs["rejection_reward"]
             self.score += all_configs["rejection_reward"]
+            request_info = self.get_request_info()
             if self.blocks > 2:
                 if self.score > self.highscore:
                     self.highscore = self.score
                 done = True
             print(f"SOLUTION FALSE {reward}")
-        return reward, done
+        return reward, done, request_info
 
     def is_solution(self, first_slot = -1):
         """
