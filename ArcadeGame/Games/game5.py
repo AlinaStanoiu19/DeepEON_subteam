@@ -104,7 +104,8 @@ class ArcadeGame:
         done = False
         selected_path = self.first_slot//9 # !!check first slot is correct
         self.constructed_path = self.paths[selected_path]
-        print(f"this is the selected path: {selected_path} and constructed_paths: {self.constructed_path}")
+        print(f"this is the selected path no: {selected_path} and constructed_path: {self.constructed_path} with length: {len(self.constructed_path)}")
+        self.route_of_links = []
         for n in range(len(self.constructed_path)-1):
             self.route_of_links.append(self.link(self.constructed_path[n], self.constructed_path[n+1]))
         print(f"this is the route of links: {self.route_of_links}")

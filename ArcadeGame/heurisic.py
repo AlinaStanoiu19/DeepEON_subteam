@@ -60,9 +60,8 @@ while episode_count < episode_count_targets:
         reward, done, info = game.check_solution()
         episode_reward += reward
         current_length += 1
-        print(f"episode reward: {episode_reward}, current reward: {reward} request_info: {info}")
         action_info =  {'action_id': action_id, 'action': action, 'reward': reward}
-        
+        print(f"action id: {action_id}, action: {action}, request info: {info}")
         episode_ids.append(episode_count)
         action_ids.append(action_info['action_id'])
         request_info.append(info)
@@ -112,13 +111,7 @@ da_df = pd.DataFrame(
 
 
 # Adding path lengths to the dataframe
-counts = da_df[da_df['Action Rewards'] >= 0]['Request Info'].apply(lambda x: x['id']).value_counts(sort=False)
-counts_da_df = pd.DataFrame({'id': counts.index, 'count': counts.values})
-
-da_df['Path length'] = da_df['Request Info'].apply(lambda x: x['id']).map(counts_da_df.set_index('id')['count'])
-da_df['Path length'] = da_df['Path length'].fillna(0) # we filtered negative rewards, unsuccessful requests therefore have NaN values which should be filled with 0
-da_df['Path length'] = da_df['Path length'].astype(int)
-
+da_df['Path length']  = da_df['Request Info'].apply(lambda x: len(x['constructed_path'])-1)
 
 # Calculating allocated slots for each episode
 episode_sum = {}
@@ -138,6 +131,7 @@ for index, row in da_df.iterrows():
 
 da_df['Utility'] = da_df['Episode IDs'].map(episode_sum)
 
+print(da_df)
 
 # Saving dataframe
 da_df.to_json(
