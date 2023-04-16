@@ -9,7 +9,7 @@ class CustomEnv(Env):
 
     def __init__(self):
         # self.config = config 
-        self.game = ArcadeGame(self.config)
+        self.game = ArcadeGame()
         self.action_space = spaces.Discrete(3)
         self.observation_space = spaces.Box(shape= (SCREEN_WIDTH, SCREEN_HEIGHT, 3),low=0,high=255,dtype=np.uint8)
         self.episode_id = 0
