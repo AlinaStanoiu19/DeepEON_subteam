@@ -24,13 +24,13 @@ class CustomEnv(Env):
             print("Move RIGHT")
             self.game.position +=1
             self.game.update_spec_grid()
-            reward = self.config["right_reward"]
+            reward = 0
             info = {"action_info": self.action_info}
         elif action == 1 and self.game.position > 0: #LEFT
             print("Move LEFT")
             self.game.position -=1
             self.game.update_spec_grid()
-            reward = self.config["left_reward"]
+            reward = 0
             info = {"action_info": self.action_info}
         elif action == 2: # ENTER
             print("ENTER")
